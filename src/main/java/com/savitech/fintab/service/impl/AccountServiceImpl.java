@@ -5,16 +5,15 @@ import com.savitech.fintab.entity.Credential;
 import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.entity.impl.Transfer;
+import com.savitech.fintab.entity.impl.UpdateProfile;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CredentialRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.UserRepository;
 import com.savitech.fintab.service.AccountService;
-import com.savitech.fintab.util.AccountType;
-import com.savitech.fintab.util.AuthenticatedUser;
-import com.savitech.fintab.util.FloatFormat;
-import com.savitech.fintab.util.Response;
+import com.savitech.fintab.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,9 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -55,6 +52,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private FloatFormat floatFormat;
+
+    @Autowired
+    private UploadFile uploadFile;
 
     @Override
     public Account myAccounts() {

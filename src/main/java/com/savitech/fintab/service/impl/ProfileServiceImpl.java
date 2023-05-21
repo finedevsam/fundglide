@@ -1,8 +1,10 @@
 package com.savitech.fintab.service.impl;
 
+import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.entity.impl.UpdateProfile;
+import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.service.ProfileService;
 import com.savitech.fintab.util.AuthenticatedUser;
@@ -14,8 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -31,6 +32,9 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Autowired
     private AuthenticatedUser authenticatedUser;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public ResponseEntity<?> updateProfile(UpdateProfile profile) {
@@ -141,5 +145,26 @@ public class ProfileServiceImpl implements ProfileService {
         }
         customerRepository.save(customer);
         return response.successResponse("Profile updated successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> loggedInUser() {
+        User user = authenticatedUser.auth();
+        Optional<Customer> customer = customerRepository.findCustomerByUserId(user.getId());
+        Account account = accountRepository.findAccountByCustomerId(customer.get().getId());
+
+        Map<Object, Object> data = new HashMap<>();
+        data.put("firstName", customer.get().getFirstName());
+        data.put("email", user.getEmail());
+        data.put("isCustomer", user.getIsCustomer());
+        data.put("lastName", customer.get().getLastName());
+        data.put("middleName", customer.get().getMiddleName());
+        data.put("modeOfId", customer.get().getModeOfId());
+        data.put("idData", customer.get().getIdData());
+        data.put("profileImage", customer.get().getProfileImage());
+        data.put("address", customer.get().getAddress());
+        data.put("accounts", account);
+        data.put("dateRegistered", user.getCreatedAt());
+        return ResponseEntity.ok(data);
     }
 }

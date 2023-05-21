@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @JsonIgnore
     private String id;
 
     @Column(name = "account_no")
@@ -40,5 +41,6 @@ public class Account {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
+    @JsonIgnore
     private Timestamp createdAt;
 }

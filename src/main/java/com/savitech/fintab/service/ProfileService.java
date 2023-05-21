@@ -6,4 +6,6 @@ import org.springframework.http.ResponseEntity;
 public interface ProfileService {
 
     ResponseEntity<?> updateProfile(UpdateProfile profile);
+
+    ResponseEntity<?> loggedInUser();
 }

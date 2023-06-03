@@ -32,7 +32,9 @@ public class WebSecurityConfig {
                         "/auth/login",
                         "/auth/register",
                         "/auth/reset-password",
-                        "/auth/reset-password/confirm"
+                        "/auth/reset-password/confirm",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

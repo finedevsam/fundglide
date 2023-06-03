@@ -56,12 +56,15 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private UploadFile uploadFile;
 
+    @Autowired
+    private Helper helper;
+
     @Override
     public Account myAccounts() {
         User user = authenticatedUser.auth();
         Optional<Customer> customer = customerRepository.findCustomerByUserId(user.getId());
 
-        return accountRepository.findAccountByCustomerId(customer.get().getId());
+        return accountRepository.findAccountsByCustomerId(customer.get().getId());
     }
 
     @Override
@@ -108,7 +111,7 @@ public class AccountServiceImpl implements AccountService {
                 return response.failResponse("Invalid Origin account No", HttpStatus.BAD_REQUEST);
             }
             Account debitAccount = accountRepository.findAccountByAccountNo(ft.getDebitAccount());
-            if(Float.parseFloat(ft.getAmount()) > Float.parseFloat(debitAccount.getBalance())){
+            if(Float.parseFloat(ft.getAmount()) > helper.workingBalance(ft.getDebitAccount(), customer.get().getId())){
                 return response.failResponse("Insufficient balance", HttpStatus.BAD_REQUEST);
             }
 

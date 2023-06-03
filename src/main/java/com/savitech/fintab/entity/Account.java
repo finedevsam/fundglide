@@ -27,9 +27,12 @@ public class Account {
 
     private String balance = "0";
 
+    @Column(name = "lock_balance")
+    private String lockBalance = "0";
+
     private String tier = "tier1";
 
-    private String code = "000";
+    private String code = "100";
 
     private Boolean active = true;
 

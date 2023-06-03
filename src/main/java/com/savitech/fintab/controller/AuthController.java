@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private RegisterServiceImpl registerService;
 
     @Autowired

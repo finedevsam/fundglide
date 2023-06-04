@@ -1,17 +1,25 @@
 package com.savitech.fintab.util;
 
 import com.savitech.fintab.entity.Account;
+import com.savitech.fintab.entity.Customer;
+import com.savitech.fintab.entity.TransactionLogs;
 import com.savitech.fintab.repository.AccountRepository;
+import com.savitech.fintab.repository.CustomerRepository;
+import com.savitech.fintab.repository.TransactionLogsRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class Helper {
@@ -20,7 +28,19 @@ public class Helper {
     private AccountRepository accountRepository;
 
     @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
     private FloatFormat floatFormat;
+
+    @Autowired
+    private TransactionLogsRepository transactionLogsRepository;
+
+    @Autowired
+    private RandomStringGenerator generator;
+
+    @Value("${bank_code}")
+    private String bank_code;
 
     public double calculateSumOfExcel(Sheet sheet){
         double totalSum = 0;
@@ -108,5 +128,56 @@ public class Helper {
         }catch (Exception e){
             return Pair.of(false, e.getMessage());
         }
+    }
+
+    public boolean validateDateTime(String dateTimeString){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime datetime = LocalDateTime.parse(dateTimeString, formatter);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime yesterday = now.minus(1, ChronoUnit.DAYS);
+
+        return datetime.isAfter(now) && !datetime.toLocalDate().isEqual(yesterday.toLocalDate());
+    }
+
+    public void createTransactionLog(String source, String sourceBank, String destination, String destinationBank, String amount, String description){
+        TransactionLogs logs = new TransactionLogs();
+        logs.setReference(generator.generateReference(16));
+        logs.setSource(source);
+        logs.setDestination(destination);
+        logs.setAmount(amount);
+        logs.setSourceBank(sourceBank);
+        logs.setDestinationBank(destinationBank);
+        logs.setDescription(buildDescription(source, sourceBank, destination, destinationBank, description));
+        transactionLogsRepository.save(logs);
+    }
+
+    private String buildDescription(String sourceAccount, String sourceBank, String destinationAccount, String destinationBank, String description){
+        String response = null;
+        if(Objects.equals(sourceBank, bank_code) && Objects.equals(sourceBank, destinationBank)){
+            Account sourceAcct = getAccount(sourceAccount);
+            Account destAcct = getAccount(destinationAccount);
+
+            Optional<Customer> sourceCustomer = getCustomer(sourceAcct.getCustomer().getId());
+            Optional<Customer> destCustomer = getCustomer(destAcct.getCustomer().getId());
+
+            response = String.format("%s|%s|%s", sourceCustomer.get().getLastName().toUpperCase(), description, destCustomer.get().getLastName().toUpperCase());
+        }
+
+        if(! Objects.equals(sourceBank, bank_code) && Objects.equals(destinationBank, bank_code)){
+            Account destAcct = getAccount(destinationAccount);
+            Optional<Customer> destCustomer = getCustomer(destAcct.getCustomer().getId());
+
+            response = String.format("%s|%s", description, destCustomer.get().getLastName().toUpperCase());
+        }
+        return response;
+    }
+
+    private Optional<Customer> getCustomer(String customerId){
+        return customerRepository.findById(customerId);
+    }
+
+    private Account getAccount(String accountNo){
+        return accountRepository.findAccountByAccountNo(accountNo);
     }
 }

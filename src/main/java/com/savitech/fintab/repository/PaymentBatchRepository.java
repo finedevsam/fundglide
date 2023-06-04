@@ -12,5 +12,5 @@ public interface PaymentBatchRepository extends JpaRepository<PaymentBatch, Stri
 
     List<PaymentBatch> findAllByCompletedAndPaymentDate(Boolean completed, Date paymentDate);
 
-    PaymentBatch findPaymentBatchById(String Id);
+    PaymentBatch findPaymentBatchByBatchNo(String batchNo);
 }

@@ -33,7 +33,7 @@ public class PaymentBatch {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "completed", updatable = false)
+    @Column(name = "completed")
     private Boolean completed = Boolean.FALSE;
 
     @Column(name = "payment_date")

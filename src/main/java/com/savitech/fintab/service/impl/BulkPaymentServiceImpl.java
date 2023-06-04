@@ -78,6 +78,10 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
             if(helper.calculateSumOfExcel(sheet) > helper.workingBalance(bulk.getDebitedAccount(), customer.get().getId())){
                 return response.failResponse("Insufficient balance", HttpStatus.BAD_REQUEST);
             }
+
+            if(!helper.validateDateTime(bulk.getDate())){
+                return response.failResponse("Please choose future date", HttpStatus.BAD_REQUEST);
+            }
             if(Objects.equals(bulk.getPaymentType(), "instant")){
                 return null;
             }else if(Objects.equals(bulk.getPaymentType(), "schedule")){

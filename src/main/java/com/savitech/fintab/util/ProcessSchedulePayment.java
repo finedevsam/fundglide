@@ -47,14 +47,18 @@ public class ProcessSchedulePayment {
                     paymentBatchDetailsRepository.save(paymentBatchDetails1);
                 }
             }
-            PaymentBatch paymentBatch1 = paymentBatchRepository.findPaymentBatchById(batch.getId());
-            paymentBatch1.setCompleted(true);
-            paymentBatchRepository.save(paymentBatch1);
+            updateBatchProcess(batch.getBatchNo());
         }
     }
 
     private String processingDate(Date date){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         return formatter.format(date);
+    }
+
+    private void updateBatchProcess(String batchNo){
+        PaymentBatch batch = paymentBatchRepository.findPaymentBatchByBatchNo(batchNo);
+        batch.setCompleted(true);
+        paymentBatchRepository.save(batch);
     }
 }

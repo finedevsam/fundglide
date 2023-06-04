@@ -1,18 +1,14 @@
 package com.savitech.fintab.service.impl;
 
-import com.savitech.fintab.entity.Account;
-import com.savitech.fintab.entity.Credential;
-import com.savitech.fintab.entity.Customer;
-import com.savitech.fintab.entity.User;
+import com.savitech.fintab.entity.*;
 import com.savitech.fintab.entity.impl.Transfer;
-import com.savitech.fintab.repository.AccountRepository;
-import com.savitech.fintab.repository.CredentialRepository;
-import com.savitech.fintab.repository.CustomerRepository;
-import com.savitech.fintab.repository.UserRepository;
+import com.savitech.fintab.repository.*;
 import com.savitech.fintab.service.AccountService;
 import com.savitech.fintab.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,6 +48,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private UploadFile uploadFile;
+
+    @Autowired
+    private TransactionLogsRepository transactionLogsRepository;
 
     @Autowired
     private Helper helper;
@@ -138,5 +137,13 @@ public class AccountServiceImpl implements AccountService {
         }else {
             return response.failResponse("Invalid Transaction pin", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public Page<TransactionLogs> myTransactionLogs(Pageable pageable) {
+        User user = authenticatedUser.auth();
+        Customer customer = authenticatedUser.getCustomer(user);
+        Account account = authenticatedUser.getCustomerAccount(customer);
+        return transactionLogsRepository.findAllBySourceOrDestination(account.getAccountNo(), account.getAccountNo(), pageable);
     }
 }

@@ -1,6 +1,7 @@
 package com.savitech.fintab.controller;
 
 import com.savitech.fintab.entity.Account;
+import com.savitech.fintab.entity.TransactionLogs;
 import com.savitech.fintab.entity.impl.BulkPayment;
 import com.savitech.fintab.entity.impl.SetPin;
 import com.savitech.fintab.entity.impl.Transfer;
@@ -8,8 +9,12 @@ import com.savitech.fintab.service.impl.AccountServiceImpl;
 import com.savitech.fintab.service.impl.BulkPaymentServiceImpl;
 import com.savitech.fintab.service.impl.CredentialServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("account")
@@ -49,5 +54,10 @@ public class AccountController {
     @PostMapping("/payment/bulk")
     public ResponseEntity<?> bulkTransfer(BulkPayment bulk){
         return bulkPaymentService.bulkPayment(bulk);
+    }
+
+    @GetMapping("logs")
+    public List<TransactionLogs> myTransactionLogs(Pageable pageable){
+        return accountService.myTransactionLogs(pageable).toList();
     }
 }

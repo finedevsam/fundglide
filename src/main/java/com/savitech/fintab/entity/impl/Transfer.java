@@ -15,6 +15,12 @@ public class Transfer {
     @NotNull(message = "Please enter amount")
     private String amount;
 
+    @NotNull(message = "Please enter destination bank code")
+    private String destinationBankCode;
+
+    @NotNull(message = "Please enter description")
+    private String description;
+
     @NotNull(message = "Please enter transaction pin")
     private String pin;
 }

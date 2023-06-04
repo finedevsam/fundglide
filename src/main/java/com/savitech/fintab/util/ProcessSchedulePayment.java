@@ -6,6 +6,7 @@ import com.savitech.fintab.entity.PaymentBatchDetails;
 import com.savitech.fintab.repository.PaymentBatchDetailsRepository;
 import com.savitech.fintab.repository.PaymentBatchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,8 @@ public class ProcessSchedulePayment {
     @Autowired
     private Helper helper;
 
+    @Value("${bank_code}")
+    private String bank_code;
 
     @Scheduled(cron = "1 * * * * *")
     public void process() throws ParseException {
@@ -46,6 +49,7 @@ public class ProcessSchedulePayment {
                     paymentBatchDetails1.setProcessed(true);
                     paymentBatchDetailsRepository.save(paymentBatchDetails1);
                 }
+                helper.createTransactionLog(batch.getSourceAccount(), bank_code, pbd.getAccountNo(), pbd.getBankCode(), pbd.getAmount(), batch.getDescription());
             }
             updateBatchProcess(batch.getBatchNo());
         }

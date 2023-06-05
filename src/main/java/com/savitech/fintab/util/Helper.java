@@ -3,9 +3,11 @@ package com.savitech.fintab.util;
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.TransactionLogs;
+import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.TransactionLogsRepository;
+import com.savitech.fintab.repository.UserRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +43,13 @@ public class Helper {
 
     @Value("${bank_code}")
     private String bank_code;
+
+    @Autowired
+    private EmailNotification notification;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     public double calculateSumOfExcel(Sheet sheet){
         double totalSum = 0;
@@ -142,14 +151,22 @@ public class Helper {
 
     public void createTransactionLog(String source, String sourceBank, String destination, String destinationBank, String amount, String description){
         TransactionLogs logs = new TransactionLogs();
-        logs.setReference(generator.generateReference(16));
+        String reference = generator.generateReference(16);
+        String desc = buildDescription(source, sourceBank, destination, destinationBank, description);
+        logs.setReference(reference);
         logs.setSource(source);
         logs.setDestination(destination);
         logs.setAmount(amount);
         logs.setSourceBank(sourceBank);
         logs.setDestinationBank(destinationBank);
-        logs.setDescription(buildDescription(source, sourceBank, destination, destinationBank, description));
+        logs.setDescription(desc);
         transactionLogsRepository.save(logs);
+
+        // Send Email notification to destination
+        sendMail(destination, reference, amount, desc, "CR");
+
+        // Send Email notification to source
+        sendMail(source, reference, amount, desc, "DR");
     }
 
     private String buildDescription(String sourceAccount, String sourceBank, String destinationAccount, String destinationBank, String description){
@@ -179,5 +196,17 @@ public class Helper {
 
     private Account getAccount(String accountNo){
         return accountRepository.findAccountByAccountNo(accountNo);
+    }
+
+    private void sendMail(String accountNo, String reference, String amount, String desc, String type){
+        try {
+            Account account = accountRepository.findAccountByAccountNo(accountNo);
+            Customer customer = customerRepository.findCustomerById(account.getCustomer().getId());
+            User user = userRepository.findUserById(customer.getUser().getId());
+            Date now = new Date();
+            notification.sendReceipt(customer.getFirstName(), reference, now, type, desc, amount, user.getEmail(), account.getBalance());
+        }catch (Exception e){
+            return;
+        }
     }
 }

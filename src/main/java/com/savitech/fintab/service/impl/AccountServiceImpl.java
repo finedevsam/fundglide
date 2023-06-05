@@ -58,6 +58,9 @@ public class AccountServiceImpl implements AccountService {
     @Value("${bank_code}")
     private String bank_code;
 
+    @Autowired
+    private EmailNotification notification;
+
     @Override
     public Account myAccounts() {
         User user = authenticatedUser.auth();

@@ -39,15 +39,21 @@ public class EmailNotification {
             Date date, String type,
             String description,
             String amount,
-            String email
+            String email,
+            String balance
             ) throws MessagingException {
+
+        double amountValue = Double.parseDouble(amount);
+        double balanceValue = Double.parseDouble(balance);
+
         Map<Object, Object> properties = new HashMap<>();
         properties.put("customerName", customerName);
         properties.put("reference", reference);
         properties.put("date", date);
         properties.put("type", type);
         properties.put("description", description);
-        properties.put("amount", amount);
+        properties.put("amount", String.format("%s %,.2f", "₦", amountValue));
+        properties.put("balance", String.format("%s %,.2f", "₦", balanceValue));
 
         emailConfig.sendHtmlMessage(properties, email, "Transaction Receipt", "receipt.html");
     }

@@ -1,8 +1,6 @@
 package com.savitech.fintab.controller;
 
-import com.savitech.fintab.entity.impl.CustomerReg;
-import com.savitech.fintab.entity.impl.Login;
-import com.savitech.fintab.entity.impl.UpdateProfile;
+import com.savitech.fintab.entity.impl.*;
 import com.savitech.fintab.service.impl.LoginServiceImpl;
 import com.savitech.fintab.service.impl.ProfileServiceImpl;
 import com.savitech.fintab.service.impl.RegisterServiceImpl;
@@ -43,6 +41,16 @@ public class AuthController {
     @GetMapping("me")
     public ResponseEntity<?> loggedInUser(){
         return profileService.loggedInUser();
+    }
+
+    @PostMapping("reset/password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPassword resetPassword){
+        return loginService.resetPassword(resetPassword);
+    }
+
+    @PostMapping("reset/confirm")
+    public ResponseEntity<?> resetPasswordConfirm(@RequestBody ResetPasswordConfirm passwordConfirm){
+        return loginService.confirmPasswordReset(passwordConfirm);
     }
 
 }

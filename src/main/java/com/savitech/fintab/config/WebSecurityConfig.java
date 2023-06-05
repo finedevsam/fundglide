@@ -31,8 +31,8 @@ public class WebSecurityConfig {
                 .requestMatchers(
                         "/auth/login",
                         "/auth/register",
-                        "/auth/reset-password",
-                        "/auth/reset-password/confirm",
+                        "/auth/reset/password",
+                        "/auth/reset/confirm",
                         "/swagger-ui/**",
                         "/swagger-ui.html"
                 ).permitAll()

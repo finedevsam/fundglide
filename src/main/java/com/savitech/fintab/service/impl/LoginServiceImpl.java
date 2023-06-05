@@ -2,26 +2,34 @@ package com.savitech.fintab.service.impl;
 
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
+import com.savitech.fintab.entity.PasswordResetToken;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.entity.impl.Login;
+import com.savitech.fintab.entity.impl.ResetPassword;
+import com.savitech.fintab.entity.impl.ResetPasswordConfirm;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
+import com.savitech.fintab.repository.PasswordResetTokenRepository;
 import com.savitech.fintab.repository.UserRepository;
 import com.savitech.fintab.security.CustomUserDetailsService;
 import com.savitech.fintab.service.LoginService;
 import com.savitech.fintab.util.JwtTokenUtil;
+import com.savitech.fintab.util.RandomStringGenerator;
 import com.savitech.fintab.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -48,6 +56,15 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private Response response;
+
+    @Autowired
+    private PasswordResetTokenRepository resetTokenRepository;
+
+    @Autowired
+    private RandomStringGenerator generator;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public ResponseEntity<?> signIn(Login login) {
@@ -106,6 +123,71 @@ public class LoginServiceImpl implements LoginService {
             data.put("profile", profile);
 
             return ResponseEntity.ok(data);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> resetPassword(ResetPassword password) {
+        PasswordResetToken token = new PasswordResetToken();
+        String code = generator.generateCode(6);
+        Map<String, Object> data = new HashMap<>();
+        if(userRepository.existsByEmail(password.getUsername())){
+            User user = userRepository.findUserByEmail(password.getUsername());
+            if(resetTokenRepository.existsByUserId(user.getId())){
+                resetTokenRepository.deleteByUserId(user.getId());
+            }
+            token.setCode(code);
+            token.setUser(user);
+            token.setReference(generator.generateReference(12));
+            resetTokenRepository.save(token);
+            data.put("reference", token.getReference());
+            data.put("message", "Your code has been sent to your register email and mobile number");
+
+            System.out.println(code);
+            return ResponseEntity.ok(data);
+        }else if (accountRepository.existsByAccountNo(password.getUsername())){
+            Account account = accountRepository.findAccountByAccountNo(password.getUsername());
+            Customer customer = customerRepository.findCustomerById(account.getCustomer().getId());
+            User user = userRepository.findUserById(customer.getUser().getId());
+
+            if(resetTokenRepository.existsByUserId(user.getId())){
+                resetTokenRepository.deleteByUserId(user.getId());
+            }
+
+            token.setCode(code);
+            token.setReference(generator.generateReference(12));
+            token.setUser(user);
+
+            resetTokenRepository.save(token);
+            data.put("reference", token.getReference());
+            data.put("message", "Your code has been sent to your register email and mobile number");
+
+            System.out.println(code);
+            return ResponseEntity.ok(data);
+        }else {
+            return response.failResponse("Account does not exist", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> confirmPasswordReset(ResetPasswordConfirm passwordConfirm) {
+        if(resetTokenRepository.existsByCodeAndReference(passwordConfirm.getCode(), passwordConfirm.getReference())){
+            PasswordResetToken passwordResetToken = resetTokenRepository.findPasswordResetTokenByCodeAndReference(passwordConfirm.getCode(), passwordConfirm.getReference());
+            if(Objects.equals(passwordConfirm.getNewPassword(), passwordConfirm.getConfirmPassword())) {
+                User user = userRepository.findUserById(passwordResetToken.getUser().getId());
+                user.setPassword(passwordEncoder.encode(passwordConfirm.getNewPassword()));
+                userRepository.save(user);
+
+                // remove the code
+                resetTokenRepository.delete(passwordResetToken);
+
+                return response.successResponse("Password reset successfully", HttpStatus.OK);
+            }else {
+                return response.failResponse("Password mismatch", HttpStatus.BAD_REQUEST);
+            }
+
+        }else {
+            return response.failResponse("invalid code or reference", HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -8,6 +8,7 @@ import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.UserRepository;
 import com.savitech.fintab.service.RegisterService;
+import com.savitech.fintab.util.EmailNotification;
 import com.savitech.fintab.util.GenerateAccountNumber;
 import com.savitech.fintab.util.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class RegisterServiceImpl implements RegisterService {
     @Autowired
     private Response response;
 
+    @Autowired
+    private EmailNotification notification;
+
     @Override
     public ResponseEntity<?> register(CustomerReg reg) {
         String accountNo = generateAccountNumber.accountNumber(1);
@@ -61,6 +65,11 @@ public class RegisterServiceImpl implements RegisterService {
         account.setAccountNo(accountNo);
         account.setCustomer(customer);
         accountRepository.save(account);
+        try {
+            notification.registrationEmail(reg.getFirstName().toUpperCase(), accountNo, String.format("%s %s", reg.getFirstName(), reg.getLastName()), reg.getEmail(), reg.getPhoneNumber());
+        } catch (Exception e){
+            return response.failResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
         return response.successResponse("Account created successfully", HttpStatus.CREATED);
     }
 }

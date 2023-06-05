@@ -138,7 +138,7 @@ public class LoginServiceImpl implements LoginService {
             }
             token.setCode(code);
             token.setUser(user);
-            token.setReference(generator.generateReference(12));
+            token.setReference(generator.generateReference(12).toLowerCase());
             resetTokenRepository.save(token);
             data.put("reference", token.getReference());
             data.put("message", "Your code has been sent to your register email and mobile number");
@@ -155,7 +155,7 @@ public class LoginServiceImpl implements LoginService {
             }
 
             token.setCode(code);
-            token.setReference(generator.generateReference(12));
+            token.setReference(generator.generateReference(12).toLowerCase());
             token.setUser(user);
 
             resetTokenRepository.save(token);

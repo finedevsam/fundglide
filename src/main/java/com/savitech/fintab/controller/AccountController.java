@@ -30,7 +30,7 @@ public class AccountController {
     private BulkPaymentServiceImpl bulkPaymentService;
 
     @GetMapping()
-    public Account account(){
+    public ResponseEntity<?> account(){
         return accountService.myAccounts();
     }
 

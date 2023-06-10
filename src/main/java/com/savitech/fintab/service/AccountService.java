@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface AccountService {
 
-    Account myAccounts();
+    ResponseEntity<?> myAccounts();
 
     ResponseEntity<?> accountLookUp(String accountNo);
 

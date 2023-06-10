@@ -11,4 +11,6 @@ public interface ProfileService {
     ResponseEntity<?> loggedInUser();
 
     ResponseEntity<?> changePassword(ChangePassword changePassword);
+
+    ResponseEntity<?> activateQRCodePayment();
 }

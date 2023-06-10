@@ -1,18 +1,22 @@
 package com.savitech.fintab.service.impl;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.encoder.QRCode;
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
+import com.savitech.fintab.entity.SecManager;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.entity.impl.ChangePassword;
 import com.savitech.fintab.entity.impl.UpdateProfile;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
+import com.savitech.fintab.repository.SecManagerRepository;
 import com.savitech.fintab.repository.UserRepository;
 import com.savitech.fintab.service.ProfileService;
-import com.savitech.fintab.util.AuthenticatedUser;
-import com.savitech.fintab.util.EmailNotification;
-import com.savitech.fintab.util.Response;
-import com.savitech.fintab.util.UploadFile;
+import com.savitech.fintab.util.*;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -21,8 +25,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
+
+import static java.awt.SystemColor.text;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -50,6 +60,15 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Autowired
     private EmailNotification notification;
+
+    @Autowired
+    private Encryption encryption;
+
+    @Autowired
+    private SecManagerRepository qrCodeRepository;
+
+    @Autowired
+    private Helper helper;
 
     @Override
     public ResponseEntity<?> updateProfile(UpdateProfile profile) {
@@ -206,5 +225,44 @@ public class ProfileServiceImpl implements ProfileService {
         }else {
             return response.failResponse("kindly include all the require body", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public ResponseEntity<?> activateQRCodePayment() {
+        User user = authenticatedUser.auth();
+        Customer customer = customerRepository.findByUserId(user.getId());
+        Account account = accountRepository.findAccountByCustomerId(customer.getId());
+        if(account.getIsQr()){
+            return response.failResponse("QRCode has already been activated for this account", HttpStatus.BAD_REQUEST);
+        }
+        Map<Object, Object> userData = new HashMap<>();
+        userData.put("cus_id", customer.getId());
+        userData.put("account", account.getAccountNo());
+        Pair<byte[], String> encData = encryption.encryptData(userData);
+
+        byte[] passcode = encData.getFirst();
+        String locator = encData.getSecond().substring(15, 30);
+
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        Map<EncodeHintType, Object> hints = new HashMap<>();
+        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+        BitMatrix bitMatrix = qrCodeWriter.encode(encData.getSecond(), BarcodeFormat.QR_CODE, 500, 500, hints);
+        File qrCodeFile = new File("/tmp/qrcode.png");
+        ImageIO.write(helper.toBufferedImage(bitMatrix), "png", qrCodeFile);
+        String url = uploadFile.uploadImageToCloudinary(qrCodeFile);
+
+        qrCodeFile.delete();
+        SecManager qrCode = new SecManager();
+
+        qrCode.setPasscode(passcode);
+        qrCode.setLocator(locator);
+        qrCode.setUser(user);
+        qrCodeRepository.save(qrCode);
+
+        account.setQRodeUrl(url);
+        account.setIsQr(true);
+        accountRepository.save(account);
+        return response.successResponse("QR Payment activated", HttpStatus.OK);
     }
 }

@@ -58,4 +58,9 @@ public class AuthController {
         return profileService.changePassword(changePassword);
     }
 
+    @GetMapping("activate/qr")
+    public ResponseEntity<?> activateQR(){
+        return profileService.activateQRCodePayment();
+    }
+
 }

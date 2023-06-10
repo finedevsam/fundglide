@@ -62,11 +62,19 @@ public class AccountServiceImpl implements AccountService {
     private EmailNotification notification;
 
     @Override
-    public Account myAccounts() {
+    public ResponseEntity<?> myAccounts() {
         User user = authenticatedUser.auth();
-        Optional<Customer> customer = customerRepository.findCustomerByUserId(user.getId());
+        Customer customer = customerRepository.findByUserId(user.getId());
+        Account account = accountRepository.findAccountsByCustomerId(customer.getId());
 
-        return accountRepository.findAccountsByCustomerId(customer.get().getId());
+        Map<Object, Object> data = new HashMap<>();
+        data.put("accountNumber", account.getAccountNo());
+        data.put("balance", account.getBalance());
+        data.put("lockBalance", account.getLockBalance());
+        data.put("tier", account.getTier());
+        data.put("accountType", accountType.accountType(account.getCode()));
+
+        return ResponseEntity.ok(data);
     }
 
     @Override

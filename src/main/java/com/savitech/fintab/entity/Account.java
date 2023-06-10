@@ -32,9 +32,15 @@ public class Account {
 
     private String tier = "tier1";
 
-    private String code = "100";
+    private String code = "000";
 
     private Boolean active = true;
+
+    @Column(name = "is_qr")
+    private Boolean isQr = Boolean.FALSE;
+
+    @Column(name = "qrcode_url")
+    private String qRodeUrl;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "customer_id")

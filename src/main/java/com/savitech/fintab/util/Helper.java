@@ -50,6 +50,9 @@ public class Helper {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AmountToWords amountToWords;
+
 
     public double calculateSumOfExcel(Sheet sheet){
         double totalSum = 0;
@@ -162,6 +165,8 @@ public class Helper {
         logs.setDescription(desc);
         transactionLogsRepository.save(logs);
 
+        String amt = amountToWords.convertToWords(Double.parseDouble(amount));
+        System.out.println(amt);
         // Send Email notification to destination
         sendMail(destination, reference, amount, desc, "CR");
 

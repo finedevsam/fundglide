@@ -1,6 +1,5 @@
 package com.savitech.fintab.service.impl;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.savitech.fintab.entity.*;
 import com.savitech.fintab.entity.impl.BulkPayment;
 import com.savitech.fintab.repository.*;
@@ -10,6 +9,8 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -62,12 +62,12 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
         DataFormatter dataFormatter = new DataFormatter();
         User user = authenticatedUser.auth();
         Credential credential = credentialRepository.findByUserId(user.getId());
-        Optional<Customer> customer = customerRepository.findCustomerByUserId(user.getId());
+        Customer customer = customerRepository.findByUserId(user.getId());
         if(!passwordEncoder.matches(bulk.getTransactionPin(), credential.getPin())){
             return response.failResponse("Invalid transaction pin", HttpStatus.BAD_REQUEST);
         }
         try {
-            Account account = accountRepository.findAccountByAccountNoAndCustomerId(bulk.getDebitedAccount(), customer.get().getId());
+            Account account = accountRepository.findAccountByAccountNoAndCustomerId(bulk.getDebitedAccount(), customer.getId());
             Sheet sheet = manageFiles.loadExcel(bulk.getFile());
 
             Pair<Boolean, String> validate = helper.checkAccountExist(sheet, bulk.getDebitedAccount());
@@ -75,7 +75,7 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
             if(!validate.getFirst()){
                 return response.failResponse(validate.getSecond(), HttpStatus.BAD_REQUEST);
             }
-            if(helper.calculateSumOfExcel(sheet) > helper.workingBalance(bulk.getDebitedAccount(), customer.get().getId())){
+            if(helper.calculateSumOfExcel(sheet) > helper.workingBalance(bulk.getDebitedAccount(), customer.getId())){
                 return response.failResponse("Insufficient balance", HttpStatus.BAD_REQUEST);
             }
 
@@ -92,6 +92,7 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
                 paymentBatch.setDescription(bulk.getDescription());
                 paymentBatch.setPaymentType(bulk.getPaymentType());
                 paymentBatch.setSourceAccount(bulk.getDebitedAccount());
+                paymentBatch.setCustomer(customer);
                 batchRepository.save(paymentBatch);
 
                 List<PaymentBatchDetails> data = new ArrayList<>();
@@ -122,5 +123,19 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
         } catch (ParseException e) {
             return response.failResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public Page<PaymentBatch> allBatchPayment(Pageable pageable) {
+        User user = authenticatedUser.auth();
+        Customer customer = customerRepository.findByUserId(user.getId());
+        return batchRepository.findPaymentBatchByCustomerId(customer.getId(), pageable);
+    }
+
+    @Override
+    public List<PaymentBatchDetails> viewBatchDetails(String batchId) {
+        User user = authenticatedUser.auth();
+        Customer customer = customerRepository.findByUserId(user.getId());
+        return batchDetailsRepository.findAllByPaymentBatchId(batchId);
     }
 }

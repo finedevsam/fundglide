@@ -3,18 +3,24 @@ package com.savitech.fintab.service.impl;
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.User;
+import com.savitech.fintab.entity.impl.ChangePassword;
 import com.savitech.fintab.entity.impl.UpdateProfile;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
+import com.savitech.fintab.repository.UserRepository;
 import com.savitech.fintab.service.ProfileService;
 import com.savitech.fintab.util.AuthenticatedUser;
+import com.savitech.fintab.util.EmailNotification;
 import com.savitech.fintab.util.Response;
 import com.savitech.fintab.util.UploadFile;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 
@@ -35,6 +41,15 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EmailNotification notification;
 
     @Override
     public ResponseEntity<?> updateProfile(UpdateProfile profile) {
@@ -166,5 +181,30 @@ public class ProfileServiceImpl implements ProfileService {
         data.put("accounts", account);
         data.put("dateRegistered", user.getCreatedAt());
         return ResponseEntity.ok(data);
+    }
+
+    @SneakyThrows
+    @Override
+    public ResponseEntity<?> changePassword(ChangePassword changePassword) {
+        User user = authenticatedUser.auth();
+        Customer customer = customerRepository.findByUserId(user.getId());
+        if (!ObjectUtils.isEmpty(changePassword)){
+            if(Objects.equals(changePassword.getNewPassword(), changePassword.getConfirmPassword())) {
+                if (passwordEncoder.matches(changePassword.getOldPassword(), user.getPassword())) {
+                    user.setPassword(passwordEncoder.encode(changePassword.getNewPassword()));
+                    userRepository.save(user);
+
+                    // Send Notification about change password
+                    notification.changePasswordMail(customer.getFirstName(), user.getEmail());
+                    return response.successResponse("password change successfully", HttpStatus.OK);
+                }else {
+                    return response.failResponse("invalid password", HttpStatus.BAD_REQUEST);
+                }
+            }else {
+                return response.failResponse("password mismatch", HttpStatus.BAD_REQUEST);
+            }
+        }else {
+            return response.failResponse("kindly include all the require body", HttpStatus.BAD_REQUEST);
+        }
     }
 }

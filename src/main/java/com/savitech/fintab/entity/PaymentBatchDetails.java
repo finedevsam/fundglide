@@ -1,5 +1,6 @@
 package com.savitech.fintab.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +38,7 @@ public class PaymentBatchDetails {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "batch_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private PaymentBatch paymentBatch;
 
     @Column(name = "processed_at")

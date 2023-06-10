@@ -13,9 +13,11 @@ import com.savitech.fintab.repository.PasswordResetTokenRepository;
 import com.savitech.fintab.repository.UserRepository;
 import com.savitech.fintab.security.CustomUserDetailsService;
 import com.savitech.fintab.service.LoginService;
+import com.savitech.fintab.util.EmailNotification;
 import com.savitech.fintab.util.JwtTokenUtil;
 import com.savitech.fintab.util.RandomStringGenerator;
 import com.savitech.fintab.util.Response;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +67,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailNotification notification;
 
     @Override
     public ResponseEntity<?> signIn(Login login) {
@@ -126,6 +131,7 @@ public class LoginServiceImpl implements LoginService {
         }
     }
 
+    @SneakyThrows
     @Override
     public ResponseEntity<?> resetPassword(ResetPassword password) {
         PasswordResetToken token = new PasswordResetToken();
@@ -133,6 +139,7 @@ public class LoginServiceImpl implements LoginService {
         Map<String, Object> data = new HashMap<>();
         if(userRepository.existsByEmail(password.getUsername())){
             User user = userRepository.findUserByEmail(password.getUsername());
+            Customer customer = customerRepository.findByUserId(user.getId());
             if(resetTokenRepository.existsByUserId(user.getId())){
                 resetTokenRepository.deleteByUserId(user.getId());
             }
@@ -140,11 +147,14 @@ public class LoginServiceImpl implements LoginService {
             token.setUser(user);
             token.setReference(generator.generateReference(12).toLowerCase());
             resetTokenRepository.save(token);
+
             data.put("reference", token.getReference());
             data.put("message", "Your code has been sent to your register email and mobile number");
 
             System.out.println(code);
+            notification.sendCode(customer.getFirstName(), code, user.getEmail());
             return ResponseEntity.ok(data);
+
         }else if (accountRepository.existsByAccountNo(password.getUsername())){
             Account account = accountRepository.findAccountByAccountNo(password.getUsername());
             Customer customer = customerRepository.findCustomerById(account.getCustomer().getId());
@@ -163,6 +173,10 @@ public class LoginServiceImpl implements LoginService {
             data.put("message", "Your code has been sent to your register email and mobile number");
 
             System.out.println(code);
+
+            notification.sendCode(customer.getFirstName(), code, user.getEmail());
+
+
             return ResponseEntity.ok(data);
         }else {
             return response.failResponse("Account does not exist", HttpStatus.BAD_REQUEST);

@@ -1,5 +1,6 @@
 package com.savitech.fintab.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +36,11 @@ public class PaymentBatch {
 
     @Column(name = "completed")
     private Boolean completed = Boolean.FALSE;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    @JsonIgnore
+    private Customer customer;
 
     @Column(name = "payment_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")

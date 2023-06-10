@@ -56,6 +56,16 @@ public class AccountController {
         return bulkPaymentService.bulkPayment(bulk);
     }
 
+    @GetMapping("/payment/bulk")
+    public List<?> allBatchPayment(Pageable pageable){
+        return bulkPaymentService.allBatchPayment(pageable).toList();
+    }
+
+    @GetMapping("/payment/bulk/{batchId}")
+    public List<?> viewBatchPayments(@PathVariable String batchId){
+        return bulkPaymentService.viewBatchDetails(batchId);
+    }
+
     @GetMapping("logs")
     public List<TransactionLogs> myTransactionLogs(Pageable pageable){
         return accountService.myTransactionLogs(pageable).toList();

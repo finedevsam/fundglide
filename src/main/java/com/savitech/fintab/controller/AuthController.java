@@ -53,4 +53,9 @@ public class AuthController {
         return loginService.confirmPasswordReset(passwordConfirm);
     }
 
+    @PostMapping("change_password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePassword changePassword){
+        return profileService.changePassword(changePassword);
+    }
+
 }

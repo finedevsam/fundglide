@@ -57,4 +57,17 @@ public class EmailNotification {
 
         emailConfig.sendHtmlMessage(properties, email, "Transaction Receipt", "receipt.html");
     }
+
+    public void sendCode(String name, String code, String email) throws MessagingException {
+        Map<Object, Object> properties = new HashMap<>();
+        properties.put("name", name);
+        properties.put("code", code);
+        emailConfig.sendHtmlMessage(properties, email, "One Time Password", "otp.html");
+    }
+
+    public void changePasswordMail(String name, String email) throws MessagingException{
+        Map<Object, Object> properties = new HashMap<>();
+        properties.put("name", name);
+        emailConfig.sendHtmlMessage(properties, email, "Change Password", "changepass.html");
+    }
 }

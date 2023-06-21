@@ -265,4 +265,12 @@ public class Helper {
         image.setRGB(0, 0, width, height, pixels, 0, width);
         return image;
     }
+
+    public String getLocator(String message){
+        int length = message.length();
+        int middleIndex = length / 2;
+        int startIndex = middleIndex - 7;  // 7 characters before the middle
+        int endIndex = middleIndex + 8;    // 8 characters after the middle
+        return message.substring(startIndex, endIndex);
+    }
 }

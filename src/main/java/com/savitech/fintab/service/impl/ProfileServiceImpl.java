@@ -242,7 +242,7 @@ public class ProfileServiceImpl implements ProfileService {
         Pair<byte[], String> encData = encryption.encryptData(userData);
 
         byte[] passcode = encData.getFirst();
-        String locator = encData.getSecond().substring(15, 30);
+        String locator = helper.getLocator(encData.getSecond());
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         Map<EncodeHintType, Object> hints = new HashMap<>();

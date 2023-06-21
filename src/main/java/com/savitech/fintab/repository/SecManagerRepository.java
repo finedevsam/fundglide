@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SecManagerRepository extends JpaRepository<SecManager, String> {
+    SecManager findSecManagerByLocator(String locator);
+
+    Boolean existsSecManagerByLocator(String locator);
 }

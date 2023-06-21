@@ -3,6 +3,7 @@ package com.savitech.fintab.controller;
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.TransactionLogs;
 import com.savitech.fintab.entity.impl.BulkPayment;
+import com.savitech.fintab.entity.impl.PayWithChannelModel;
 import com.savitech.fintab.entity.impl.SetPin;
 import com.savitech.fintab.entity.impl.Transfer;
 import com.savitech.fintab.service.impl.AccountServiceImpl;
@@ -49,6 +50,12 @@ public class AccountController {
     @PostMapping("/transfer")
     public ResponseEntity<?> fundTransfer(@RequestBody Transfer ft){
         return accountService.transfer(ft);
+    }
+
+
+    @PostMapping("/channel/validate")
+    public ResponseEntity<?> verifyPayWithChannel(@RequestBody PayWithChannelModel channelModel){
+        return accountService.verifyPayWithChannel(channelModel);
     }
 
     @PostMapping("/payment/bulk")

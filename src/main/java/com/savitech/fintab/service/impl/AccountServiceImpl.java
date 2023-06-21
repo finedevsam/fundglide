@@ -1,10 +1,12 @@
 package com.savitech.fintab.service.impl;
 
 import com.savitech.fintab.entity.*;
+import com.savitech.fintab.entity.impl.PayWithChannelModel;
 import com.savitech.fintab.entity.impl.Transfer;
 import com.savitech.fintab.repository.*;
 import com.savitech.fintab.service.AccountService;
 import com.savitech.fintab.util.*;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -61,6 +63,12 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private EmailNotification notification;
 
+    @Autowired
+    private Encryption encryption;
+
+    @Autowired
+    private SecManagerRepository secManagerRepository;
+
     @Override
     public ResponseEntity<?> myAccounts() {
         User user = authenticatedUser.auth();
@@ -72,6 +80,7 @@ public class AccountServiceImpl implements AccountService {
         data.put("balance", account.getBalance());
         data.put("lockBalance", account.getLockBalance());
         data.put("tier", account.getTier());
+        data.put("qrCode", account.getQRodeUrl());
         data.put("accountType", accountType.accountType(account.getCode()));
 
         return ResponseEntity.ok(data);
@@ -156,5 +165,27 @@ public class AccountServiceImpl implements AccountService {
         Customer customer = authenticatedUser.getCustomer(user);
         Account account = authenticatedUser.getCustomerAccount(customer);
         return transactionLogsRepository.findAllBySourceOrDestination(account.getAccountNo(), account.getAccountNo(), pageable);
+    }
+
+    @SneakyThrows
+    @Override
+    public ResponseEntity<?> verifyPayWithChannel(PayWithChannelModel channelModel) {
+        if(Objects.equals(channelModel.getChannel(), "qrpay")) {
+            String locator = helper.getLocator(channelModel.getData());
+            if (!secManagerRepository.existsSecManagerByLocator(locator)) {
+                return response.failResponse("data is not recognize", HttpStatus.BAD_REQUEST);
+            } else {
+                SecManager secManager = secManagerRepository.findSecManagerByLocator(locator);
+                byte[] passcode = secManager.getPasscode();
+                Map<?, ?> decryptedData = encryption.decryptData(channelModel.getData(), passcode);
+                Customer customer = customerRepository.findCustomerById(String.valueOf(decryptedData.get("cus_id")));
+                Map<Object, Object> data = new HashMap<>();
+                data.put("accountName", String.format("%s %s", customer.getLastName().toUpperCase(), customer.getFirstName().toUpperCase()));
+                data.put("accountNo", String.valueOf(decryptedData.get("account")));
+                return ResponseEntity.ok(data);
+            }
+        }else {
+            return response.failResponse("We only support QR Pay at the moment", HttpStatus.BAD_REQUEST);
+        }
     }
 }

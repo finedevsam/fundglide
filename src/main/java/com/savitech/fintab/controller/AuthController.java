@@ -43,6 +43,12 @@ public class AuthController {
         return adminLoginServiceImpl.login(adminLoginModel);
     }
 
+
+    @GetMapping("admin/isme")
+    public ResponseEntity<?> adminLoggedInUser(){
+        return adminLoginServiceImpl.loggedInAdmin();
+    }
+
     @PutMapping("profile")
     public ResponseEntity<?> updateProfile(UpdateProfile profile){
         return profileService.updateProfile(profile);

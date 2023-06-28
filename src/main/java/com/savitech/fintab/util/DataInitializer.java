@@ -10,9 +10,11 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 import com.savitech.fintab.entity.AdminUser;
+import com.savitech.fintab.entity.Department;
 import com.savitech.fintab.entity.Permission;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AdminUserRepository;
+import com.savitech.fintab.repository.DepartmentRepository;
 import com.savitech.fintab.repository.PermissionRepository;
 import com.savitech.fintab.repository.UserRepository;
 
@@ -31,6 +33,9 @@ public class DataInitializer implements ApplicationRunner{
 
     @Autowired
     private PermissionRepository permissionRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     public void run(ApplicationArguments args) throws Exception{
         String email = "admin@fintabsolution.com";
@@ -52,13 +57,17 @@ public class DataInitializer implements ApplicationRunner{
                 perm = userPerm;
             }
 
+            Department department = new Department();
+            department.setName("admin");
+            departmentRepository.save(department);
+
             AdminUser adminUser = new AdminUser();
 
             List<String> userPermission = new ArrayList<>();
             userPermission.add(perm.getId());
             adminUser.setFirstName("System");
             adminUser.setLastName("Administrator");
-            adminUser.setDepartment("Admin");
+            adminUser.setDepartment(department.getId());
             adminUser.setUser(user);
             adminUser.setPermission(userPermission);
             adminUserRepository.save(adminUser);

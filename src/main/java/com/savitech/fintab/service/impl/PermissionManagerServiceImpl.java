@@ -13,6 +13,7 @@ import com.savitech.fintab.entity.AdminUser;
 import com.savitech.fintab.entity.Permission;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.entity.impl.PermissionModel;
+import com.savitech.fintab.entity.impl.PermissionUpdateModel;
 import com.savitech.fintab.repository.AdminUserRepository;
 import com.savitech.fintab.repository.PermissionRepository;
 import com.savitech.fintab.service.PermissionManagerService;
@@ -87,11 +88,67 @@ public class PermissionManagerServiceImpl implements PermissionManagerService{
     @Override
     public ResponseEntity<?> allPermission() {
         User user = authenticatedUser.auth();
-        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
 
         if(!user.getIsAdmin()){
             return response.failResponse("Permission denied", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok().body(permissionRepository.findAll());
+    }
+
+    @Override
+    public ResponseEntity<?> updatePermistion(String Id, PermissionUpdateModel permissionUpdateModel) {
+        User user = authenticatedUser.auth();
+
+        if(!user.getIsAdmin()){
+            return response.failResponse("Permission denied", HttpStatus.BAD_REQUEST);
+        }
+         AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+         List<String> createPermissionlist = Arrays.asList("update", "all");
+        
+        List<String> myPermission = adminUser.getPermission();
+        for(String id: myPermission){
+            if(!createPermissionlist.contains(getRole(id))){
+                return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        Permission permission = permissionRepository.findPermissionById(Id);
+        if(Objects.isNull(permission)){
+            return response.failResponse("Invalid id", HttpStatus.BAD_REQUEST);
+        }
+        permission.setName(permissionUpdateModel.getName());
+        permissionRepository.save(permission);
+        return response.successResponse("Permission updated successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> deletePermission(String Id) {
+        User user = authenticatedUser.auth();
+
+        if(!user.getIsAdmin()){
+            return response.failResponse("Permission denied", HttpStatus.BAD_REQUEST);
+        }
+
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+        List<String> createPermissionlist = Arrays.asList("delete", "all");
+        
+        List<String> myPermission = adminUser.getPermission();
+        for(String id: myPermission){
+            if(!createPermissionlist.contains(getRole(id))){
+                return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        Permission permission = permissionRepository.findPermissionById(Id);
+        if(Objects.isNull(permission)){
+            return response.failResponse("Invalid id", HttpStatus.BAD_REQUEST);
+        }
+
+        if(Objects.equals(permission.getRole(), "all")){
+            return response.failResponse("You can not remove the super admin", HttpStatus.OK);
+        }
+
+        permissionRepository.delete(permission);
+        return response.successResponse("Permission deleted", HttpStatus.OK);
     }
 }

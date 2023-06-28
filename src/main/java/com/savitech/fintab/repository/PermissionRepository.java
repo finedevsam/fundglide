@@ -6,4 +6,6 @@ import com.savitech.fintab.entity.Permission;
 
 public interface PermissionRepository extends JpaRepository<Permission, String>{
     Boolean existsByName(String name);
+    Boolean existsByRole(String role);
+    Permission findPermissionById(String id);
 }

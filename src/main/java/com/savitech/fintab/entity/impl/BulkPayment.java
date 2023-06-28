@@ -3,8 +3,6 @@ package com.savitech.fintab.entity.impl;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Date;
-import java.time.format.DateTimeFormatter;
 
 @Data
 public class BulkPayment {

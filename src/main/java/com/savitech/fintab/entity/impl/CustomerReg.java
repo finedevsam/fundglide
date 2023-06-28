@@ -1,6 +1,5 @@
 package com.savitech.fintab.entity.impl;
 
-import jakarta.persistence.Column;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

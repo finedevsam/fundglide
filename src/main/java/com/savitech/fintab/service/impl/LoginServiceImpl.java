@@ -107,6 +107,9 @@ public class LoginServiceImpl implements LoginService {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(login.getUsername());
             User user = userRepository.findUserByEmail(userDetails.getUsername());
 
+            if(!user.getIsCustomer()){
+                return response.failResponse("Permission Denied", HttpStatus.BAD_GATEWAY);
+            }
             Optional<Customer> customer = customerRepository.findCustomerByUserId(user.getId());
 
             Map<Object, Object> data = new HashMap<>();

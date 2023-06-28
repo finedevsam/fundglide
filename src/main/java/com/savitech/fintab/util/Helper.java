@@ -13,6 +13,8 @@ import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.TransactionLogsRepository;
 import com.savitech.fintab.repository.UserRepository;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -173,7 +175,7 @@ public class Helper {
         logs.setDescription(desc);
         transactionLogsRepository.save(logs);
 
-        String amt = amountToWords.convertToWords(Double.parseDouble(amount));
+        String amt = StringUtils.capitalize(amountToWords.convertToWords(Double.parseDouble(amount)));
         System.out.println(amt);
         // Send Email notification to destination
         sendMail(destination, reference, amount, desc, "CR");

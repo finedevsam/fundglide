@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
@@ -57,6 +58,9 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Value("${bank_code}")
+    private String bank_code;
+
     @Override
     public ResponseEntity<?> bulkPayment(BulkPayment bulk) {
         DataFormatter dataFormatter = new DataFormatter();
@@ -79,11 +83,40 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
                 return response.failResponse("Insufficient balance", HttpStatus.BAD_REQUEST);
             }
 
-            if(!helper.validateDateTime(bulk.getDate())){
+            if(!helper.validateDateTime(bulk.getDate()) && Objects.equals(bulk.getPaymentType(), "schedule")){
                 return response.failResponse("Please choose future date", HttpStatus.BAD_REQUEST);
             }
             if(Objects.equals(bulk.getPaymentType(), "instant")){
-                return null;
+                for(Row row: sheet){
+                    if(row.getRowNum() == 0){
+                        continue;
+                    }else{
+                        String receiverAccountNo = dataFormatter.formatCellValue(row.getCell(0));
+                        String amount = dataFormatter.formatCellValue(row.getCell(2));
+                        String destinationBank = dataFormatter.formatCellValue(row.getCell(1));
+                        
+                        // Credit the Reciever
+                        Account reciever = accountRepository.findAccountByAccountNo(receiverAccountNo);
+                        
+                        if (!accountRepository.existsByAccountNo(receiverAccountNo)){
+                            return response.failResponse(String.format("%s is not a valid account number. Kindly fix and try again", receiverAccountNo), HttpStatus.BAD_REQUEST);
+                        }
+                        double newBal = Double.parseDouble(amount) + Double.parseDouble(reciever.getBalance());
+
+                        reciever.setBalance(String.valueOf(newBal));
+                        accountRepository.save(reciever);
+
+                        // Debit the Sender
+                        double newSenderBal = Double.parseDouble(account.getBalance()) - Double.parseDouble(amount);
+                        account.setBalance(String.valueOf(newSenderBal));
+                        accountRepository.save(account);
+
+                         // Create reciever logs
+                        helper.createTransactionLog(bulk.getDebitedAccount(), bank_code, receiverAccountNo, destinationBank, amount, bulk.getDescription());
+                    }
+                }
+                return response.successResponse("Payment successfull", HttpStatus.OK);
+                
             }else if(Objects.equals(bulk.getPaymentType(), "schedule")){
                 PaymentBatch paymentBatch = new PaymentBatch();
 
@@ -118,7 +151,6 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
                 return response.failResponse("Please select valid payment type", HttpStatus.BAD_REQUEST);
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             return response.failResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (ParseException e) {
             return response.failResponse(e.getMessage(), HttpStatus.BAD_REQUEST);

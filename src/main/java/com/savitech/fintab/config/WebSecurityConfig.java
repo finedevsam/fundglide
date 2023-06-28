@@ -30,6 +30,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/auth/login",
+                         "/auth/admin/login",
                         "/auth/register",
                         "/auth/reset/password",
                         "/auth/reset/confirm",

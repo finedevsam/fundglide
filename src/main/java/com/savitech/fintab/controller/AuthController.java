@@ -1,6 +1,7 @@
 package com.savitech.fintab.controller;
 
 import com.savitech.fintab.entity.impl.*;
+import com.savitech.fintab.service.impl.AdminLoginServiceImpl;
 import com.savitech.fintab.service.impl.LoginServiceImpl;
 import com.savitech.fintab.service.impl.ProfileServiceImpl;
 import com.savitech.fintab.service.impl.RegisterServiceImpl;
@@ -22,6 +23,9 @@ public class AuthController {
     @Autowired
     private ProfileServiceImpl profileService;
 
+    @Autowired
+    private AdminLoginServiceImpl adminLoginServiceImpl;
+
 
     @PostMapping("register")
     public ResponseEntity<?> register(@RequestBody CustomerReg reg){
@@ -31,6 +35,12 @@ public class AuthController {
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody Login login){
         return loginService.signIn(login);
+    }
+
+
+    @PostMapping("admin/login")
+    public ResponseEntity<?> adminLogin(@RequestBody AdminLoginModel adminLoginModel){
+        return adminLoginServiceImpl.login(adminLoginModel);
     }
 
     @PutMapping("profile")

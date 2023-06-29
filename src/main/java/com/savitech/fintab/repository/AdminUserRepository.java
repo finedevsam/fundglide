@@ -7,5 +7,6 @@ import com.savitech.fintab.entity.AdminUser;
 public interface AdminUserRepository extends JpaRepository<AdminUser, String>{
 
     AdminUser findByUserId(String id);
+    AdminUser findAUserById(String id);
     
 }

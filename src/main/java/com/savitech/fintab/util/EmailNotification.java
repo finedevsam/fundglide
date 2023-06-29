@@ -70,4 +70,12 @@ public class EmailNotification {
         properties.put("name", name);
         emailConfig.sendHtmlMessage(properties, email, "Change Password", "changepass.html");
     }
+
+    public void staffCreateMail(String staffName, String email, String password) throws MessagingException{
+        Map<Object, Object> properties = new HashMap<>();
+        properties.put("staffName", staffName);
+        properties.put("password", password);
+        properties.put("email", email);
+        emailConfig.sendHtmlMessage(properties, email, "Staff Onboarding", "staffregister.html");
+    }
 }

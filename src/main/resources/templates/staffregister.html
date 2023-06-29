@@ -1,0 +1,69 @@
+<!--xmlns:th="http://www.thymeleaf.org"-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Our Financial Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #008080;
+            margin-top: 0;
+        }
+
+        p {
+            line-height: 1.5;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #808080;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to Our Financial Application!</h1>
+
+    <p>Dear <span th:text="${staffName}"></span>,</p>
+
+    <p>You have been onboarded on FINTAB Financial Solution as an administrator of the system/.</p>
+
+    <ul>
+        <li><strong>Email:</strong> <span th:text="${email}"></span></li>
+        <li><strong>Password:</strong> <span th:text="${password}"></span></li>
+    </ul>
+
+    <p>Should you have any questions or require assistance, please feel free to reach out to our support team.</p>
+
+    <p>Thank you once again for choosing our financial application. We look forward to serving you!</p>
+
+    <div class="footer">
+        <p>Best regards,</p>
+        <p>The FINTAB Team</p>
+    </div>
+</div>
+</body>
+</html>

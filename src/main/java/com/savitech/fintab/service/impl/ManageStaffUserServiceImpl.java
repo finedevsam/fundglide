@@ -12,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.savitech.fintab.entity.AdminUser;
+import com.savitech.fintab.entity.Permission;
 import com.savitech.fintab.entity.User;
+import com.savitech.fintab.entity.impl.AddPermissionToStaff;
 import com.savitech.fintab.entity.impl.CreateStaffModel;
 import com.savitech.fintab.entity.impl.UpdateStaffModel;
 import com.savitech.fintab.repository.AdminUserRepository;
@@ -184,6 +186,92 @@ public class ManageStaffUserServiceImpl implements ManageStaffUserService{
         }
         adminUserRepository.save(newAdUser);
         return response.successResponse("Record updated successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> giveUserPermission(String Id, AddPermissionToStaff permissionToStaff) {
+        User user = authenticatedUser.auth();
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+
+        if(adminUser.getPermission().size() < 1){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+
+        List<String> createPermissionlist = Arrays.asList("all");
+        
+        List<String> myPermission = adminUser.getPermission();
+        for(String id: myPermission){
+            if(!createPermissionlist.contains(helper.getRole(id))){
+                return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        Permission permission = permissionRepository.findPermissionById(permissionToStaff.getPermission());
+        if(Objects.isNull(permission)){
+            return response.failResponse("Invalid permission Id", HttpStatus.BAD_REQUEST);
+        }
+
+        AdminUser newAdUser = adminUserRepository.findAUserById(Id);
+        if(Objects.isNull(newAdUser)){
+            return response.failResponse("Invalid Id", HttpStatus.BAD_REQUEST);
+        }
+        List<String> newPermission = newAdUser.getPermission();
+        
+        if(newPermission.contains(permissionToStaff.getPermission())){
+            return response.failResponse("User already have this permission", HttpStatus.OK);
+        }
+        
+        newPermission.add(permissionToStaff.getPermission());
+
+        newAdUser.setPermission(newPermission);
+        adminUserRepository.save(newAdUser);
+        return response.successResponse(String.format("%s permission has been granted to %s", permission.getName(), newAdUser.getFirstName()), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> revokeStaffPermission(String staffId, String permissionId) {
+        User user = authenticatedUser.auth();
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+
+        if(adminUser.getPermission().size() < 1){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+
+        List<String> createPermissionlist = Arrays.asList("all");
+        
+        List<String> myPermission = adminUser.getPermission();
+        for(String id: myPermission){
+            if(!createPermissionlist.contains(helper.getRole(id))){
+                return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        Permission permission = permissionRepository.findPermissionById(permissionId);
+        if(Objects.isNull(permission)){
+            return response.failResponse("Invalid permission Id", HttpStatus.BAD_REQUEST);
+        }
+
+        AdminUser newAdUser = adminUserRepository.findAUserById(staffId);
+        if(Objects.isNull(newAdUser)){
+            return response.failResponse("Invalid staff Id", HttpStatus.BAD_REQUEST);
+        }
+        List<String> newPermission = newAdUser.getPermission();
+        
+        if(!newPermission.contains(permissionId)){
+            return response.failResponse("User does not have this permission", HttpStatus.OK);
+        }
+        
+        newPermission.remove(permissionId);
+
+        newAdUser.setPermission(newPermission);
+        adminUserRepository.save(newAdUser);
+        return response.successResponse(String.format("%s permission has been remove from %s", permission.getName(), newAdUser.getFirstName()), HttpStatus.OK);
     }
     
 }

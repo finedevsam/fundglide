@@ -7,10 +7,12 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
+import com.savitech.fintab.entity.Permission;
 import com.savitech.fintab.entity.TransactionLogs;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
+import com.savitech.fintab.repository.PermissionRepository;
 import com.savitech.fintab.repository.TransactionLogsRepository;
 import com.savitech.fintab.repository.UserRepository;
 
@@ -62,6 +64,9 @@ public class Helper {
 
     @Autowired
     private AmountToWords amountToWords;
+
+    @Autowired
+    private PermissionRepository permissionRepository;
 
 
     public double calculateSumOfExcel(Sheet sheet){
@@ -274,5 +279,10 @@ public class Helper {
         int startIndex = middleIndex - 7;  // 7 characters before the middle
         int endIndex = middleIndex + 8;    // 8 characters after the middle
         return message.substring(startIndex, endIndex);
+    }
+
+    public String getRole(String Id){
+        Permission permission = permissionRepository.findPermissionById(Id);
+        return permission.getRole();
     }
 }

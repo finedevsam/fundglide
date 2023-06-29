@@ -18,6 +18,7 @@ import com.savitech.fintab.repository.AdminUserRepository;
 import com.savitech.fintab.repository.PermissionRepository;
 import com.savitech.fintab.service.PermissionManagerService;
 import com.savitech.fintab.util.AuthenticatedUser;
+import com.savitech.fintab.util.Helper;
 import com.savitech.fintab.util.Response;
 
 @Service
@@ -34,6 +35,9 @@ public class PermissionManagerServiceImpl implements PermissionManagerService{
 
     @Autowired
     private Response response;
+
+    @Autowired
+    private Helper helper;
 
     @Override
     public ResponseEntity<?> createRole(PermissionModel permissionModel) {
@@ -55,7 +59,7 @@ public class PermissionManagerServiceImpl implements PermissionManagerService{
         
         List<String> myPermission = adminUser.getPermission();
         for(String id: myPermission){
-            if(!createPermissionlist.contains(getRole(id))){
+            if(!createPermissionlist.contains(helper.getRole(id))){
                 return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
             }
         }
@@ -72,10 +76,7 @@ public class PermissionManagerServiceImpl implements PermissionManagerService{
         return response.successResponse("Role created successfully", HttpStatus.OK);
     }
     
-    private String getRole(String Id){
-        Permission permission = permissionRepository.findPermissionById(Id);
-        return permission.getRole();
-    }
+    
 
     private Boolean checkRoleType(String role){
         List<String> list = Arrays.asList("create", "delete", "update", "approval");
@@ -107,7 +108,7 @@ public class PermissionManagerServiceImpl implements PermissionManagerService{
         
         List<String> myPermission = adminUser.getPermission();
         for(String id: myPermission){
-            if(!createPermissionlist.contains(getRole(id))){
+            if(!createPermissionlist.contains(helper.getRole(id))){
                 return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
             }
         }
@@ -134,7 +135,7 @@ public class PermissionManagerServiceImpl implements PermissionManagerService{
         
         List<String> myPermission = adminUser.getPermission();
         for(String id: myPermission){
-            if(!createPermissionlist.contains(getRole(id))){
+            if(!createPermissionlist.contains(helper.getRole(id))){
                 return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
             }
         }

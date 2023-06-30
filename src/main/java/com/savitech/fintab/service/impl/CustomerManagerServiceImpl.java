@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.savitech.fintab.entity.User;
+import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.AdminUserRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.UserRepository;
@@ -24,6 +25,9 @@ public class CustomerManagerServiceImpl implements CustomerManagerService{
     private AdminUserRepository adminUserRepository;
 
     @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -38,7 +42,8 @@ public class CustomerManagerServiceImpl implements CustomerManagerService{
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
         }
         userRepository.findByIsCustomer(true);
-        return ResponseEntity.ok().body(customerRepository.findAll(pageable).toList());
+        // accountRepository.findAll();
+        return ResponseEntity.ok().body(accountRepository.findAll(pageable).toList());
     }
     
 }

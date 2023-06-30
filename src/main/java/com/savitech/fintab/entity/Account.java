@@ -45,7 +45,6 @@ public class Account {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "customer_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     private Customer customer;
 
     @Column(name = "created_at", nullable = false, updatable = false)

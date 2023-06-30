@@ -6,30 +6,30 @@ Welcome to the documentation for our open-source financial application! This app
 ### Features
 Our financial application offers the following key features:
 
-1. ``Account Tiering:`` The application supports account tiering, allowing users to categorize accounts into different tiers based on predefined criteria. This feature enables personalized account management and customized services for different account types.
+1. **Account Tiering:** The application supports account tiering, allowing users to categorize accounts into different tiers based on predefined criteria. This feature enables personalized account management and customized services for different account types.
 
-2. ``Fund Transfer:`` Users can initiate fund transfers between their own accounts or to other users. The application supports various transfer methods such as bank transfers, e-wallet transfers, and online payment gateways, ensuring secure and convenient transactions.
+2. **Fund Transfer:** Users can initiate fund transfers between their own accounts or to other users. The application supports various transfer methods such as bank transfers, e-wallet transfers, and online payment gateways, ensuring secure and convenient transactions.
 
-3. ``QR Payment:`` The application integrates QR code payment functionality, enabling users to make payments by scanning QR codes. This feature simplifies the payment process and facilitates seamless transactions between individuals and businesses.
+3. **QR Payment:** The application integrates QR code payment functionality, enabling users to make payments by scanning QR codes. This feature simplifies the payment process and facilitates seamless transactions between individuals and businesses.
 
-4. ``Intra and Inter Transact:`` Users can perform both intra- and inter-bank transactions. Intra-transactions allow transfers within the same financial institution, while inter-transactions enable transfers between different banks. The application handles the necessary protocols and security measures to ensure smooth and secure transactions.
+4. **Intra and Inter Transact:** Users can perform both intra- and inter-bank transactions. Intra-transactions allow transfers within the same financial institution, while inter-transactions enable transfers between different banks. The application handles the necessary protocols and security measures to ensure smooth and secure transactions.
 
-5. ``Loan Booking:`` Users can apply for loans through the application. The loan booking feature provides a streamlined process for loan applications, including eligibility checks, document submission, and approval workflows. It helps users access financial assistance conveniently and efficiently.
+5. **Loan Booking:** Users can apply for loans through the application. The loan booking feature provides a streamlined process for loan applications, including eligibility checks, document submission, and approval workflows. It helps users access financial assistance conveniently and efficiently.
 
 
 ### Getting Started
 
 To get started with our financial application, follow these steps:
 
-1. ``System Requirements:`` Before proceeding, ensure that your system meets the minimum requirements specified in the installation guide. This includes supported operating systems, dependencies, and software prerequisites.
+1. **System Requirements:** Before proceeding, ensure that your system meets the minimum requirements specified in the installation guide. This includes supported operating systems, dependencies, and software prerequisites.
 
-2. ``Installation:`` Refer to the installation guide for detailed instructions on how to set up the application environment. It covers steps such as downloading the source code, configuring the database, and setting up any additional dependencies.
+2. **Installation:** Refer to the installation guide for detailed instructions on how to set up the application environment. It covers steps such as downloading the source code, configuring the database, and setting up any additional dependencies.
 
-3. ``Configuration:`` Once installed, configure the application settings according to your specific requirements. This may include database connection details, API integrations, and security settings. The configuration guide will provide detailed instructions for this process.
+3. **Configuration:** Once installed, configure the application settings according to your specific requirements. This may include database connection details, API integrations, and security settings. The configuration guide will provide detailed instructions for this process.
 
-4. ``Usage and API Documentation:`` Explore the user guide and API documentation to understand how to use the various features of the application. The user guide will walk you through the application's user interface, while the API documentation will provide insights into integrating with the application programmatically.
+4. **Usage and API Documentation:** Explore the user guide and API documentation to understand how to use the various features of the application. The user guide will walk you through the application's user interface, while the API documentation will provide insights into integrating with the application programmatically.
 
-5. ``Contributing:`` If you're interested in contributing to the application's development, we encourage you to read the contribution guidelines. It outlines the process for submitting bug reports, feature requests, and code contributions. You can also find information about the development workflow, coding standards, and testing guidelines.
+5. **Contributing:** If you're interested in contributing to the application's development, we encourage you to read the contribution guidelines. It outlines the process for submitting bug reports, feature requests, and code contributions. You can also find information about the development workflow, coding standards, and testing guidelines.
 
 ### Support
 
@@ -51,18 +51,52 @@ Welcome to the documentation for our REST API. This API provides access to vario
 ## Table of Contents
 
 - [Authentication](#authentication)
-- [Users](#users)
-  - [Get All Users](#get-users)
-  - [Get User by ID](#get-user-by-id)
-  - [Create User](#create-user)
-  - [Update User](#update-user)
-  - [Delete User](#delete-user)
-- [Posts](#posts)
-  - [Get All Posts](#get-all-posts)
-  - [Get Post by ID](#get-post-by-id)
-  - [Create Post](#create-post)
-  - [Update Post](#update-post)
-  - [Delete Post](#delete-post)
+    - [Admin Sigin](#get-all-posts)
+    - [Customer Sigin](#get-all-posts)
+    - [Logged In Customer](#get-all-posts)
+    - [Logged In Staff](#get-all-posts)
+    - [Update Profile](#get-all-posts)
+    - [Reset Password](#get-all-posts)
+    - [Reset Password Confirm](#get-all-posts)
+    - [Change Password](#get-all-posts)
+- [Customer](#users)
+  - [Register](#register)
+  - [Activate QR Payment](#get-user-by-id)
+  - [Logged In Customer](#create-user)
+  - [Set Transaction Pin](#create-user)
+  - [Bulk Payment](#bulk-payment)
+    - [Bulk Transfer](#delete-user)
+    - [My Bulk Transaction](#delete-user)
+    - [View Bulk Details](#delete-user)
+  - [Account](#account)
+    - [Account Lookup](#delete-user)
+    - [Transfer](#transfer)
+    - [Validate Channel](#delete-user)
+    - [Transaction Logs](#delete-user)
+    - [My Account](#my-accounts)
+- [Admin](#admin)
+  - [Customer](#admin-customer)
+    - [All Customer](#get-user-by-id)
+    - [All Transaction](#get-user-by-id)
+    - [View Account Transaction](#get-user-by-id)
+    - [View Customer Account](#get-user-by-id)
+  - [Staff](#create-user)
+    - [Create Staff](#update-user)
+    - [Update Staff Records](#update-user)
+    - [Assign Permission to Staff](#update-user)
+    - [Revoke Permission from Staff](#update-user)
+    - [All Staff](#update-user)
+  - [Department](#delete-user)
+    - [Create Department](#update-user)
+    - [Update Department](#update-user)
+    - [Delete Department](#update-user)
+    - [All Department](#update-user)
+  - [Permission](#posts)
+    - [Create Permission](#get-all-posts)
+    - [Update Permission](#get-all-posts)
+    - [All Permission](#get-all-posts)
+    - [Delete Permission](#get-all-posts)
+
 
 ## Authentication
 

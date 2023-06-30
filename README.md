@@ -52,7 +52,7 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 - [Authentication](#authentication)
 - [Users](#users)
-  - [Get All Users](#get-all-users)
+  - [Get All Users](#get-users)
   - [Get User by ID](#get-user-by-id)
   - [Create User](#create-user)
   - [Update User](#update-user)

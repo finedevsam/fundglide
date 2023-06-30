@@ -102,6 +102,7 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 - [POST /auth/login](#post-authlogin): Authenticate a user and obtain an access token.
 
+
 ## Users
 
 ### Get All Users

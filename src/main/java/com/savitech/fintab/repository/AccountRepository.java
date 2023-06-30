@@ -15,5 +15,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     Account findAccountByCustomerId(String id);
 
+    Account findAllAccountByCustomerId(String id);
+
     Account findAccountByAccountNoAndCustomerId(String accountNo, String customerId);
 }

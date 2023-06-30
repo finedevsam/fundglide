@@ -42,9 +42,10 @@ public class Account {
     @Column(name = "qrcode_url")
     private String qRodeUrl;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Customer customer;
 
     @Column(name = "created_at", nullable = false, updatable = false)

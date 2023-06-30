@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AccountRepository;
-import com.savitech.fintab.repository.AdminUserRepository;
 import com.savitech.fintab.repository.CustomerRepository;
+import com.savitech.fintab.repository.TransactionLogsRepository;
 import com.savitech.fintab.repository.UserRepository;
 import com.savitech.fintab.service.CustomerManagerService;
 import com.savitech.fintab.util.AuthenticatedUser;
@@ -22,7 +22,7 @@ public class CustomerManagerServiceImpl implements CustomerManagerService{
     private AuthenticatedUser authenticatedUser;
 
     @Autowired
-    private AdminUserRepository adminUserRepository;
+    private TransactionLogsRepository transactionLogsRepository;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -32,6 +32,7 @@ public class CustomerManagerServiceImpl implements CustomerManagerService{
 
     @Autowired
     private Response response;
+
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -43,7 +44,35 @@ public class CustomerManagerServiceImpl implements CustomerManagerService{
         }
         userRepository.findByIsCustomer(true);
         // accountRepository.findAll();
-        return ResponseEntity.ok().body(accountRepository.findAll(pageable).toList());
+        return ResponseEntity.ok().body(customerRepository.findAll(pageable).toList());
+    }
+
+    @Override
+    public ResponseEntity<?> viewCustomerAccount(String customerId) {
+        User user = authenticatedUser.auth();
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok().body(accountRepository.findAllAccountByCustomerId(customerId));
+    }
+
+    @Override
+    public ResponseEntity<?> allCustomerTransactions(Pageable pageable) {
+        User user = authenticatedUser.auth();
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().body(transactionLogsRepository.findAll(pageable).toList());
+    }
+
+    @Override
+    public ResponseEntity<?> viewAccountTransactions(String accountNo, Pageable pageable) {
+        User user = authenticatedUser.auth();
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().body(transactionLogsRepository.findAllBySourceOrDestination(accountNo, accountNo, pageable).toList());
     }
     
 }

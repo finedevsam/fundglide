@@ -42,3 +42,129 @@ Thank you for choosing our open-source financial application. We hope this docum
 Happy banking and financial management with our open-source financial application!
 
 **The FundGlide Team**
+
+
+# REST API Documentation
+
+Welcome to the documentation for our REST API. This API provides access to various endpoints for interacting with our system. Use the table of contents below to navigate through the documentation.
+
+## Table of Contents
+
+- [Authentication](#authentication)
+- [Users](#users)
+  - [Get All Users](#get-all-users)
+  - [Get User by ID](#get-user-by-id)
+  - [Create User](#create-user)
+  - [Update User](#update-user)
+  - [Delete User](#delete-user)
+- [Posts](#posts)
+  - [Get All Posts](#get-all-posts)
+  - [Get Post by ID](#get-post-by-id)
+  - [Create Post](#create-post)
+  - [Update Post](#update-post)
+  - [Delete Post](#delete-post)
+
+## Authentication
+
+- [POST /auth/login](#post-authlogin): Authenticate a user and obtain an access token.
+
+## Users
+
+### Get All Users
+
+- [GET /users](#get-users): Retrieve a list of all users.
+
+### Get User by ID
+
+- [GET /users/{id}](#get-usersid): Retrieve a specific user by ID.
+
+### Create User
+
+- [POST /users](#post-users): Create a new user.
+
+### Update User
+
+- [PUT /users/{id}](#put-usersid): Update an existing user.
+
+### Delete User
+
+- [DELETE /users/{id}](#delete-usersid): Delete a user.
+
+## Posts
+
+### Get All Posts
+
+- [GET /posts](#get-posts): Retrieve a list of all posts.
+
+### Get Post by ID
+
+- [GET /posts/{id}](#get-postsid): Retrieve a specific post by ID.
+
+### Create Post
+
+- [POST /posts](#post-posts): Create a new post.
+
+### Update Post
+
+- [PUT /posts/{id}](#put-postsid): Update an existing post.
+
+### Delete Post
+
+- [DELETE /posts/{id}](#delete-postsid): Delete a post.
+
+---
+
+## Endpoint Details
+
+### POST /auth/login
+
+Authenticate a user and obtain an access token.
+
+- Request:
+  - Method: `POST`
+  - Path: `/auth/login`
+  - Body:
+    ```json
+    {
+      "username": "user@example.com",
+      "password": "secretpassword"
+    }
+    ```
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+    ```
+
+### GET /users
+
+Retrieve a list of all users.
+
+- Request:
+  - Method: `GET`
+  - Path: `/users`
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    [
+      {
+        "id": 1,
+        "name": "John Doe",
+        "email": "johndoe@example.com"
+      },
+      {
+        "id": 2,
+        "name": "Jane Smith",
+        "email": "janesmith@example.com"
+      }
+    ]
+    ```
+
+... and so on for each endpoint.
+

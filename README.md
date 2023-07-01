@@ -100,7 +100,7 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 ## Authentication
 
-- [POST /auth/admin/login](#admin-login): Authenticate Admin/Staff and obtain an access token.
+- [POST /auth/admin/login](#admin-login-details): Authenticate Admin/Staff and obtain an access token.
 
 - [POST /auth/login](#customer-login): Authenticate customer and obtain an access token.
 

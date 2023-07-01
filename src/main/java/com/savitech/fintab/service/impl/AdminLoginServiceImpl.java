@@ -25,6 +25,8 @@ import com.savitech.fintab.util.AuthenticatedUser;
 import com.savitech.fintab.util.JwtTokenUtil;
 import com.savitech.fintab.util.Response;
 
+import lombok.SneakyThrows;
+
 @Service
 public class AdminLoginServiceImpl implements AdminLoginService{
 
@@ -52,6 +54,7 @@ public class AdminLoginServiceImpl implements AdminLoginService{
     @Autowired
     private AuthenticatedUser authenticatedUser;
 
+    @SneakyThrows
     @Override
     public ResponseEntity<?> login(AdminLoginModel adminLoginModel) {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(adminLoginModel.getEmail());
@@ -66,12 +69,8 @@ public class AdminLoginServiceImpl implements AdminLoginService{
         Map<Object, Object> profile = new HashMap<>();
         Map<Object, Object> auth = new HashMap<>();
         final String token = jwtTokenUtil.generateToken(userDetails);
-
-        try {
-            authenticate(user.getEmail(), adminLoginModel.getPassword());
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        
+        authenticate(user.getEmail(), adminLoginModel.getPassword());
 
         auth.put("accessToken", token);
         profile.put("email", user.getEmail());

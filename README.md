@@ -17,14 +17,12 @@
         - [Customer Reset Password Confirm](#customer-reset-password-confirm)
         - [Change Password](#change-password)
     - [Customer](#users)
-    - [Register](#register)
-    - [Activate QR Payment](#get-user-by-id)
-    - [Logged In Customer](#create-user)
-    - [Set Transaction Pin](#create-user)
-    - [Bulk Payment](#bulk-payment)
-        - [Bulk Transfer](#delete-user)
-        - [My Bulk Transaction](#delete-user)
-        - [View Bulk Details](#delete-user)
+        - [Register](#register)
+        - [Activate QR Payment](#activate-qr-payment)
+        - [Set Transaction Pin](#set-transaction-pin)
+        - [All Bulk Payment](#all-bulk-payment)
+        - [Bulk Transfer](#bulk-transfer)
+        - [View Bulk Details](#view-bulk-details)
     - [Account](#account)
         - [Account Lookup](#delete-user)
         - [Transfer](#transfer)
@@ -247,7 +245,7 @@ Welcome to the documentation for our REST API. This API provides access to vario
     - Method: `PUT`
     - Headers: 
         - Authorization: `{{Bearer token}}`
-        - `Content-Type: multipart/form-data`
+        - Content-Type: `multipart/form-data`
     - Path: `/auth/profile`
     - Body:
         ```json
@@ -355,7 +353,7 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 ### Customer Change Password
 
-- [PUT /auth/change_password](#change-password-details): Change user password.
+- [POST /auth/change_password](#change-password-details): Change user password.
 
     - Request:
     - Method: `POST`
@@ -381,27 +379,172 @@ Welcome to the documentation for our REST API. This API provides access to vario
             "status": "successful"
         }
         ```
-### Delete User
+### Register
 
-- [DELETE /users/{id}](#delete-usersid): Delete a user.
+- [POST /auth/register](#register): Customer Registration
+    - Request:
+    - Method: `POST`
+    - Path: `/auth/register`
+    - Body:
+    ```json
+        {
+            "firstName": "Akin",
+            "lastName": "Sam",
+            "email": "akinsam@gmail.com",
+            "phoneNumber": "080223014---",
+            "password": "12345"
+        }
+    ```
 
-## Posts
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "code": 200,
+            "message": "successfully",
+            "status": "successful"
+        }
+        ```
 
-### Get All Posts
+### Activate QR Code
+- [GET /auth/activate/qr](#activate-qr-payment): Customer activate QR Payment
 
-- [GET /posts](#get-posts): Retrieve a list of all posts.
 
-### Get Post by ID
+    - Request:
+    - Method: `POST`
+    - Path: `/auth/activate/qr`
+    - Headers: 
+        - Authorization: `{{Bearer token}}`
 
-- [GET /posts/{id}](#get-postsid): Retrieve a specific post by ID.
+    - Response:
+    - Status: `200 OK`
+    - Body:
+    ```json
+    {
+        "code": 200,
+        "message": "QR Code Activate Successful",
+        "status": "successful"
+    }
+    ```
 
-### Create Post
+### Set Transaction Pin
 
-- [POST /posts](#post-posts): Create a new post.
+- [POST /account/set-pin](#set-transaction-pin): Customer set transaction pin.
+    - Request:
+    - Method: `POST`
+    - Path: `/account/set-pin`
+    - Headers: 
+        - Authorization: `{{Bearer token}}`
+    - Body:
+        ```json
+        {
+            "pin": "1792",
+            "password": "12345"
+        }
+        ```
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "code": 200,
+            "message": "Transaction Pin set successfully",
+            "status": "successful"
+        }
+        ```
+
+### Bulk Transfer
+
+- [POST /account/payment/bulk}](#bulk-transfer): Bulk payment that allow staff to pay instant bulk payment or future payment.
+    - Request:
+    - Method: `POST`
+    - Headers: 
+        - Authorization: `{{Bearer token}}`
+        - Content-Type: `multipart/form-data`
+    - Path: `/account/payment/bulk`
+    - Body:
+        ```json
+            --boundary
+
+                --boundary
+                Content-Disposition: form-data; name="file"; filename="payment.xlsx"
+                Content-Type: file/jpeg
+
+                --boundary
+                Content-Disposition: form-data; name="paymentType"
+                instant|schedule
+
+                --boundary
+                Content-Disposition: form-data; name="transactionPin"
+
+                transactionPin
+
+                --boundary
+                Content-Disposition: form-data; name="description"
+                description
+
+                --boundary
+                Content-Disposition: form-data; name="date"
+                2023-06-04 22:42
+
+                [Binary Image Data]
+                --boundary--
+        ```
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "code": 200,
+            "message": "Payment successfull",
+            "status": "successful"
+        }
+        ```
+
+### All Bulk Payment
+
+- [GET /account/payment/bulk](#all-bulk-payment): List all Customer Bulk Payment.
+
+
+    - Request:
+    - Method: `GET`
+    - Path: `/account/payment/bulk`
+    - Headers: 
+        - Authorization: `{{Bearer token}}`
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+    ```json
+    [
+        {
+            "list all the bulk payment"
+        }
+    ]
+    ```
 
 ### Update Post
 
-- [PUT /posts/{id}](#put-postsid): Update an existing post.
+- [GET /account/payment/bulk/{id}](#view-bulk-details): View bulk payment with the batch id
+    - Request:
+        - Method: `GET`
+        - Path: `/account/payment/bulk/{id}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+        [
+            {
+                "list all the bulk payment"
+            }
+        ]
+        ```
 
 ### Delete Post
 

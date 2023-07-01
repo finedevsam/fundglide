@@ -24,10 +24,10 @@
         - [Bulk Transfer](#bulk-transfer)
         - [View Bulk Details](#view-bulk-details)
     - [Account](#account)
-        - [Account Lookup](#delete-user)
+        - [Account Lookup](#account-lookup)
         - [Transfer](#transfer)
-        - [Validate Channel](#delete-user)
-        - [Transaction Logs](#delete-user)
+        - [Validate Channel](#validate-channel)
+        - [Transaction Logs](#transaction-logs)
         - [My Account](#my-accounts)
     - [Admin](#admin)
     - [Customer](#admin-customer)
@@ -546,10 +546,125 @@ Welcome to the documentation for our REST API. This API provides access to vario
         ]
         ```
 
-### Delete Post
+### Account Lookup
 
-- [DELETE /posts/{id}](#delete-postsid): Delete a post.
+- [GET /account/lookup/{accountNo}](#account-lookup): Delete a post.
+     - Request:
+        - Method: `GET`
+        - Path: `/account/lookup/{accountNo}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
 
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "accountName": "SAM AKIN",
+                "accountNo": "3000000000",
+                "accountType": "SAVINGS ACCOUNT"
+            }
+        ```
+
+
+### Transfer
+
+- [POST /account/transfer](#transfer): Fund Transfer
+     - Request:
+        - Method: `POST`
+        - Path: `/account/transfer`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "debitAccount": "3000000000",
+                "creditAccount": "3000000001",
+                "destinationBankCode": "100",
+                "amount": "2000",
+                "description": "Test Payment",
+                "pin": "1792"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Transaction successfully",
+                "status": "successful"
+            }
+        ```
+
+### Validate Channel
+
+- [POST /account/channel/validate](#validate-channel): After using scanner to scan the QRCode or use NFC to get the record, pass the encrypted data to the request body.
+     - Request:
+        - Method: `POST`
+        - Path: `/account/channel/validate`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "channel": "qrpay",
+                "data": "Sb+C0IayOigJvdSCPUJjVCtdeCuYKYsvogzOjRC...."
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "accountName": "SAM AKIN",
+                "accountNo": "3000000000",
+                "accountType": "SAVINGS ACCOUNT"
+            }
+        ```
+
+### Transaction Log
+
+- [GET /account/logs](#transaction-history): Pull all customer transaction history
+    - Request:
+        - Method: `GET`
+        - Path: `/account/logs`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+        [
+            {
+                "list of all transactions"
+            }
+        ]
+        ```
+
+### My Account
+
+- [GET /account](#my-accounts): Show customer account
+    - Request:
+        - Method: `GET`
+        - Path: `/account`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "balance": "9858000",
+                "tier": "tier1",
+                "qrCode": "https://res.cloudinary.qrcode/qrcode_q0no3v.png",
+                "accountType": "SAVINGS ACCOUNT",
+                "lockBalance": "0",
+                "accountNumber": "3000000000"
+            }
+        ```
 ---
 
 

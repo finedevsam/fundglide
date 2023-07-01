@@ -301,7 +301,7 @@ Retrieve authenticated customer.
     - `Content-Type: multipart/form-data`
   - Path: `/auth/profile`
   - Body:
-  ```http
+    ```json
         --boundary
 
             --boundary

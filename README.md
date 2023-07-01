@@ -11,10 +11,10 @@
         - [Admin/Staff Sigin](#admin-login)
         - [Customer Sigin](#customer-login)
         - [Logged In Customer](#logged-in-customer)
-        - [Logged In Staff](#logged-in-admin)
-        - [Update Profile](#update-customer-profile)
-        - [Reset Password](#customer-reset-password)
-        - [Reset Password Confirm](#customer-reset-password-confirm)
+        - [Logged In Staff](#logged-in-staff)
+        - [Update Customer Profile](#update-customer-profile)
+        - [Customer Reset Password](#customer-reset-password)
+        - [Customer Reset Password Confirm](#customer-reset-password-confirm)
         - [Change Password](#change-password)
     - [Customer](#users)
     - [Register](#register)
@@ -122,12 +122,12 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 - [GET /auth/profile](#update-customer-profile-details): Update customer profile.
 
-### Password Reset
+### Customer Password Reset
 
 - [POST /auth/reset/password](#customer-reset-password-details): Customer Initiate password reset.
 - [POST /auth/reset/confirm](#customer-reset-password-confirm-details): Customer confirm password reset.
 
-### Change Password
+### Customer Change Password
 
 - [PUT /auth/change_password](#change-password-details): Change user password.
 

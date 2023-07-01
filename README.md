@@ -108,39 +108,39 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 - [POST /auth/admin/login](#admin-staff-login): Authenticate Admin/Staff and obtain an access token.
 
-Authenticate admin/staff and obtain an access token.
+    Authenticate admin/staff and obtain an access token.
 
-- Request:
-  - Method: `POST`
-  - Path: `/auth/admin/login`
-  - Body:
-    ```json
-    {
-        "email": "admin@fintabsolution.com",
-        "password": "12345"
-    }
-    ```
-
-- Response:
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-        "profile": {
-            "firstName": "System",
-            "lastName": "Administrator",
-            "imageUrl": null,
-            "permission": [
-                "713abf3f-d595-4774-a4e3-5b6c3bf83e96"
-            ],
-            "department": "9387fc1e-cd58-49ba-823f-bd114c1fabf0",
-            "email": "admin@fintabsolution.com"
-        },
-        "user": {
-            "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBmaW50YWJzb2x1dGlvbi5jb20iLCJleHAiO...."
+    - Request:
+    - Method: `POST`
+    - Path: `/auth/admin/login`
+    - Body:
+        ```json
+        {
+            "email": "admin@fintabsolution.com",
+            "password": "12345"
         }
-    }
-    ```
+        ```
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "profile": {
+                "firstName": "System",
+                "lastName": "Administrator",
+                "imageUrl": null,
+                "permission": [
+                    "713abf3f-d595-4774-a4e3-5b6c3bf83e96"
+                ],
+                "department": "9387fc1e-cd58-49ba-823f-bd114c1fabf0",
+                "email": "admin@fintabsolution.com"
+            },
+            "user": {
+                "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBmaW50YWJzb2x1dGlvbi5jb20iLCJleHAiO...."
+            }
+        }
+        ```
 
 - [POST /auth/login](#customer-login): Authenticate customer and obtain an access token.
 

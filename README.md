@@ -51,14 +51,14 @@ Welcome to the documentation for our REST API. This API provides access to vario
 ## Table of Contents
 
 - [Authentication](#authentication)
-    - [Admin Sigin](#get-all-posts)
-    - [Customer Sigin](#get-all-posts)
-    - [Logged In Customer](#get-all-posts)
-    - [Logged In Staff](#get-all-posts)
-    - [Update Profile](#get-all-posts)
-    - [Reset Password](#get-all-posts)
-    - [Reset Password Confirm](#get-all-posts)
-    - [Change Password](#get-all-posts)
+    - [Admin/Staff Sigin](#admin-login)
+    - [Customer Sigin](#customer-login)
+    - [Logged In Customer](#logged-in-customer)
+    - [Logged In Staff](#logged-in-admin)
+    - [Update Profile](#update-customer-profile)
+    - [Reset Password](#customer-reset-password)
+    - [Reset Password Confirm](#customer-reset-password-confirm)
+    - [Change Password](#change-password)
 - [Customer](#users)
   - [Register](#register)
   - [Activate QR Payment](#get-user-by-id)
@@ -100,26 +100,30 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 ## Authentication
 
-- [POST /auth/login](#post-authlogin): Authenticate a user and obtain an access token.
+- [POST /auth/admin/login](#admin-login): Authenticate Admin/Staff and obtain an access token.
+
+- [POST /auth/login](#customer-login): Authenticate customer and obtain an access token.
 
 
 ## Users
 
-### Get All Users
+### Logged In Customer
 
-- [GET /users](#get-users): Retrieve a list of all users.
+- [GET /auth/me](#logged-in-customer): Retrieve authenticated customer.
+- [GET /auth/admin/isme](#logged-in-admin): Retrieve authenticated admin/staff.
 
-### Get User by ID
+### Update Customer Profile
 
-- [GET /users/{id}](#get-usersid): Retrieve a specific user by ID.
+- [GET /auth/profile](#update-customer-profile): Update customer profile.
 
-### Create User
+### Password Reset
 
-- [POST /users](#post-users): Create a new user.
+- [POST /auth/reset/password](#customer-reset-password): Customer Initiate password reset.
+- [POST /auth/reset/confirm](#customer-reset-password-confirm): Customer confirm password reset.
 
-### Update User
+### Change Password
 
-- [PUT /users/{id}](#put-usersid): Update an existing user.
+- [PUT /auth/change_password](#change-password): Change user password.
 
 ### Delete User
 
@@ -151,9 +155,45 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 ## Endpoint Details
 
+### POST /auth/admin/login
+
+Authenticate admin/staff and obtain an access token.
+
+- Request:
+  - Method: `POST`
+  - Path: `/auth/admin/login`
+  - Body:
+    ```json
+    {
+        "email": "admin@fintabsolution.com",
+        "password": "12345"
+    }
+    ```
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+        "profile": {
+            "firstName": "System",
+            "lastName": "Administrator",
+            "imageUrl": null,
+            "permission": [
+                "713abf3f-d595-4774-a4e3-5b6c3bf83e96"
+            ],
+            "department": "9387fc1e-cd58-49ba-823f-bd114c1fabf0",
+            "email": "admin@fintabsolution.com"
+        },
+        "user": {
+            "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBmaW50YWJzb2x1dGlvbi5jb20iLCJleHAiO...."
+        }
+    }
+    ```
+
 ### POST /auth/login
 
-Authenticate a user and obtain an access token.
+Authenticate customer and obtain an access token. Customer username can either be email or the account number.
 
 - Request:
   - Method: `POST`
@@ -161,8 +201,8 @@ Authenticate a user and obtain an access token.
   - Body:
     ```json
     {
-      "username": "user@example.com",
-      "password": "secretpassword"
+        "username": "admin@fintabsolution.com",
+        "password": "12345"
     }
     ```
 
@@ -171,34 +211,226 @@ Authenticate a user and obtain an access token.
   - Body:
     ```json
     {
-      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "profile": {
+            "firstName": "Akin",
+            "lastName": "Sam",
+            "middleName": null,
+            "email": "akinsam@gmail.com"
+        },
+        "user": {
+            "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJha2lu..........."
+        }
     }
     ```
 
-### GET /users
+### GET /auth/me
 
-Retrieve a list of all users.
+Retrieve authenticated customer.
 
 - Request:
   - Method: `GET`
-  - Path: `/users`
+  - Headers: 
+    - Authorization: `{{Bearer token}}`
+  - Path: `/auth/me`
 
 - Response:
   - Status: `200 OK`
   - Body:
     ```json
-    [
-      {
-        "id": 1,
-        "name": "John Doe",
-        "email": "johndoe@example.com"
-      },
-      {
-        "id": 2,
-        "name": "Jane Smith",
-        "email": "janesmith@example.com"
-      }
-    ]
+    {
+        "firstName": "Akin",
+        "isCustomer": true,
+        "lastName": "Sam",
+        "address": null,
+        "modeOfId": null,
+        "middleName": null,
+        "idData": null,
+        "profileImage": null,
+        "accounts": {
+            "accountNo": "3000000000",
+            "balance": "9980000.0",
+            "lockBalance": "0",
+            "tier": "tier1",
+            "code": "000",
+            "active": true,
+            "isQr": true,
+            "qrodeUrl": ""
+        },
+        "email": "akinsam@gmail.com",
+        "dateRegistered": "2023-06-28T00:58:54.724+00:00"
+    }
+    ```
+
+
+### GET /auth/admin/isme
+
+Retrieve authenticated customer.
+
+- Request:
+  - Method: `GET`
+  - Headers: 
+    - Authorization: `{{Bearer token}}`
+  - Path: `/auth/admin/isme`
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+        "profile": {
+            "firstName": "System",
+            "lastName": "Administrator",
+            "imageUrl": null,
+            "permission": [
+                "ddc42b94-3e86-4396-8217-bdcf60e64e37"
+            ],
+            "department": "Admin",
+            "email": "admin@fintabsolution.com"
+        }
+    }
+    ```
+
+### PUT /auth/admin/isme
+
+Retrieve authenticated customer.
+
+- Request:
+  - Method: `PUT`
+  - Headers: 
+    - Authorization: `{{Bearer token}}`
+    - `Content-Type: multipart/form-data`
+  - Path: `/auth/profile`
+  - Body:
+  ```json
+        --boundary
+
+            --boundary
+            Content-Disposition: form-data; name="idData"; filename="profile.jpg"
+            Content-Type: image/jpeg
+
+            --boundary
+            Content-Disposition: form-data; name="modeOfId"
+            passport
+
+            --boundary
+            Content-Disposition: form-data; name="address"
+
+            Lagos Nigeria
+
+            --boundary
+            Content-Disposition: form-data; name="firstName"
+            Firstname
+
+            --boundary
+            Content-Disposition: form-data; name="lastName"
+            Lastname
+            
+            --boundary
+            Content-Disposition: form-data; name="middleName"
+            Middlename
+
+            --boundary
+            Content-Disposition: form-data; name="mobileNumber"
+            mobileNumber
+
+            --boundary  
+            Content-Disposition: form-data; name="profileImage"; filename="profile.jpg"
+            Content-Type: image/jpeg
+
+            [Binary Image Data]
+            --boundary--
+    ```
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+        "code": 200,
+        "message": "Profile updated successfully",
+        "status": "successful"
+    }
+    ```
+
+### POST auth/reset/password
+
+Customer reset password can take either the customer account number or email as ``username`` value.
+
+- Request:
+  - Method: `POST`
+  - Path: `auth/reset/password`
+  - Body:
+    ```json
+    {
+        "username": "3000000000"
+    }
+    ```
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+        "reference": "sjyirzbw4crr",
+        "message": "Your code has been sent to your register email and mobile number"
+    }
+    ```
+
+### POST /auth/reset/confirm
+
+Customer confirm the password reset with the code sent to the registered email.
+
+- Request:
+  - Method: `POST`
+  - Path: `/auth/reset/confirm`
+  - Body:
+    ```json
+    {
+        "reference": "sjyirzbw4crr",
+        "code": "396258",
+        "newPassword": "123456",
+        "confirmPassword": "123456"
+    }
+    ```
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+        "code": 200,
+        "message": "Password reset successfully",
+        "status": "successful"
+    }
+    ```
+
+### POST /auth/change_password
+
+Customer confirm the password reset with the code sent to the registered email.
+
+- Request:
+  - Method: `POST`
+  - Path: `/auth/change_password`
+  - Headers: 
+    - Authorization: `{{Bearer token}}`
+  - Body:
+    ```json
+    {
+        "oldPassword": "12345",
+        "newPassword": "123456",
+        "confirmPassword": "123456"
+    }
+    ```
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+        "code": 200,
+        "message": "password change successfully",
+        "status": "successful"
+    }
     ```
 
 ... and so on for each endpoint.

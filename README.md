@@ -102,28 +102,28 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 - [POST /auth/admin/login](#admin-login-details): Authenticate Admin/Staff and obtain an access token.
 
-- [POST /auth/login](#customer-login): Authenticate customer and obtain an access token.
+- [POST /auth/login](#customer-login-details): Authenticate customer and obtain an access token.
 
 
 ## Users
 
 ### Logged In Customer
 
-- [GET /auth/me](#logged-in-customer): Retrieve authenticated customer.
-- [GET /auth/admin/isme](#logged-in-admin): Retrieve authenticated admin/staff.
+- [GET /auth/me](#logged-in-customer-details): Retrieve authenticated customer.
+- [GET /auth/admin/isme](#logged-in-admin-details): Retrieve authenticated admin/staff.
 
 ### Update Customer Profile
 
-- [GET /auth/profile](#update-customer-profile): Update customer profile.
+- [GET /auth/profile](#update-customer-profile-details): Update customer profile.
 
 ### Password Reset
 
-- [POST /auth/reset/password](#customer-reset-password): Customer Initiate password reset.
-- [POST /auth/reset/confirm](#customer-reset-password-confirm): Customer confirm password reset.
+- [POST /auth/reset/password](#customer-reset-password-details): Customer Initiate password reset.
+- [POST /auth/reset/confirm](#customer-reset-password-confirm-details): Customer confirm password reset.
 
 ### Change Password
 
-- [PUT /auth/change_password](#change-password): Change user password.
+- [PUT /auth/change_password](#change-password-details): Change user password.
 
 ### Delete User
 

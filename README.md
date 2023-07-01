@@ -8,8 +8,8 @@
 - [Conclusion](#conclusion)
 - [REST API Documentation](#rest-api-documentation)
     - [Authentication](#authentication)
-        - [Admin/Staff Sigin](#admin-staff-sigin)
-        - [Customer Sigin](#customer-sigin)
+        - [Admin-Staff Login](#admin-staff-login)
+        - [Customer Login](#customer-login)
         - [Logged In Customer](#logged-in-customer)
         - [Logged In Staff](#logged-in-staff)
         - [Update Customer Profile](#update-customer-profile)
@@ -106,9 +106,9 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 ## Authentication
 
-- [POST /auth/admin/login](#admin-staff-sigin-details): Authenticate Admin/Staff and obtain an access token.
+- [POST /auth/admin/login](#admin-staff-login): Authenticate Admin/Staff and obtain an access token.
 
-- [POST /auth/login](#customer-signin-details): Authenticate customer and obtain an access token.
+- [POST /auth/login](#customer-login): Authenticate customer and obtain an access token.
 
 
 ## Users

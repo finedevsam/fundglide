@@ -142,7 +142,35 @@ Welcome to the documentation for our REST API. This API provides access to vario
         }
         ```
 
-- [POST /auth/login](#customer-login): Authenticate customer and obtain an access token.
+- [POST /auth/login](#customer-login): Authenticate customer and obtain an access token. Customer username can either be email or the account number.
+
+    - Request:
+    - Method: `POST`
+    - Path: `/auth/login`
+    - Body:
+        ```json
+        {
+            "username": "admin@fintabsolution.com",
+            "password": "12345"
+        }
+        ```
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "profile": {
+                "firstName": "Akin",
+                "lastName": "Sam",
+                "middleName": null,
+                "email": "akinsam@gmail.com"
+            },
+            "user": {
+                "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJha2lu..........."
+            }
+        }
+        ```
 
 
 ## Users
@@ -150,21 +178,209 @@ Welcome to the documentation for our REST API. This API provides access to vario
 ### Logged In Customer
 
 - [GET /auth/me](#logged-in-customer-details): Retrieve authenticated customer.
+
+    - Request:
+    - Method: `GET`
+    - Headers: 
+        - Authorization: `{{Bearer token}}`
+    - Path: `/auth/me`
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "firstName": "Akin",
+            "isCustomer": true,
+            "lastName": "Sam",
+            "address": null,
+            "modeOfId": null,
+            "middleName": null,
+            "idData": null,
+            "profileImage": null,
+            "accounts": {
+                "accountNo": "3000000000",
+                "balance": "9980000.0",
+                "lockBalance": "0",
+                "tier": "tier1",
+                "code": "000",
+                "active": true,
+                "isQr": true,
+                "qrodeUrl": ""
+            },
+            "email": "akinsam@gmail.com",
+            "dateRegistered": "2023-06-28T00:58:54.724+00:00"
+        }
+        ```
+
 - [GET /auth/admin/isme](#logged-in-admin-details): Retrieve authenticated admin/staff.
+
+    - Request:
+    - Method: `GET`
+    - Headers: 
+        - Authorization: `{{Bearer token}}`
+    - Path: `/auth/admin/isme`
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "profile": {
+                "firstName": "System",
+                "lastName": "Administrator",
+                "imageUrl": null,
+                "permission": [
+                    "ddc42b94-3e86-4396-8217-bdcf60e64e37"
+                ],
+                "department": "Admin",
+                "email": "admin@fintabsolution.com"
+            }
+        }
+        ```
 
 ### Update Customer Profile
 
 - [GET /auth/profile](#update-customer-profile-details): Update customer profile.
 
+    - Request:
+    - Method: `PUT`
+    - Headers: 
+        - Authorization: `{{Bearer token}}`
+        - `Content-Type: multipart/form-data`
+    - Path: `/auth/profile`
+    - Body:
+        ```json
+            --boundary
+
+                --boundary
+                Content-Disposition: form-data; name="idData"; filename="profile.jpg"
+                Content-Type: image/jpeg
+
+                --boundary
+                Content-Disposition: form-data; name="modeOfId"
+                passport
+
+                --boundary
+                Content-Disposition: form-data; name="address"
+
+                Lagos Nigeria
+
+                --boundary
+                Content-Disposition: form-data; name="firstName"
+                Firstname
+
+                --boundary
+                Content-Disposition: form-data; name="lastName"
+                Lastname
+                
+                --boundary
+                Content-Disposition: form-data; name="middleName"
+                Middlename
+
+                --boundary
+                Content-Disposition: form-data; name="mobileNumber"
+                mobileNumber
+
+                --boundary  
+                Content-Disposition: form-data; name="profileImage"; filename="profile.jpg"
+                Content-Type: image/jpeg
+
+                [Binary Image Data]
+                --boundary--
+        ```
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "code": 200,
+            "message": "Profile updated successfully",
+            "status": "successful"
+        }
+        ```
+
+
 ### Customer Password Reset
 
 - [POST /auth/reset/password](#customer-reset-password-details): Customer Initiate password reset.
-- [POST /auth/reset/confirm](#customer-reset-password-confirm-details): Customer confirm password reset.
+
+    Customer reset password can take either the customer account number or email as ``username`` value.
+
+    - Request:
+    - Method: `POST`
+    - Path: `auth/reset/password`
+    - Body:
+        ```json
+        {
+            "username": "3000000000"
+        }
+        ```
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "reference": "sjyirzbw4crr",
+            "message": "Your code has been sent to your register email and mobile number"
+        }
+        ```
+- [POST /auth/reset/confirm](#customer-reset-password-confirm-details): Customer confirm the password reset with the code sent to the registered email.
+
+- Request:
+  - Method: `POST`
+  - Path: `/auth/reset/confirm`
+  - Body:
+    ```json
+    {
+        "reference": "sjyirzbw4crr",
+        "code": "396258",
+        "newPassword": "123456",
+        "confirmPassword": "123456"
+    }
+    ```
+
+- Response:
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+        "code": 200,
+        "message": "Password reset successfully",
+        "status": "successful"
+    }
+    ```
 
 ### Customer Change Password
 
 - [PUT /auth/change_password](#change-password-details): Change user password.
 
+    - Request:
+    - Method: `POST`
+    - Path: `/auth/change_password`
+    - Headers: 
+        - Authorization: `{{Bearer token}}`
+    - Body:
+        ```json
+        {
+            "oldPassword": "12345",
+            "newPassword": "123456",
+            "confirmPassword": "123456"
+        }
+        ```
+
+    - Response:
+    - Status: `200 OK`
+    - Body:
+        ```json
+        {
+            "code": 200,
+            "message": "password change successfully",
+            "status": "successful"
+        }
+        ```
 ### Delete User
 
 - [DELETE /users/{id}](#delete-usersid): Delete a user.
@@ -193,251 +409,7 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 ---
 
-## Endpoint Details
 
-
-
-### POST /auth/login
-
-Authenticate customer and obtain an access token. Customer username can either be email or the account number.
-
-- Request:
-  - Method: `POST`
-  - Path: `/auth/login`
-  - Body:
-    ```json
-    {
-        "username": "admin@fintabsolution.com",
-        "password": "12345"
-    }
-    ```
-
-- Response:
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-        "profile": {
-            "firstName": "Akin",
-            "lastName": "Sam",
-            "middleName": null,
-            "email": "akinsam@gmail.com"
-        },
-        "user": {
-            "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJha2lu..........."
-        }
-    }
-    ```
-
-### GET /auth/me
-
-Retrieve authenticated customer.
-
-- Request:
-  - Method: `GET`
-  - Headers: 
-    - Authorization: `{{Bearer token}}`
-  - Path: `/auth/me`
-
-- Response:
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-        "firstName": "Akin",
-        "isCustomer": true,
-        "lastName": "Sam",
-        "address": null,
-        "modeOfId": null,
-        "middleName": null,
-        "idData": null,
-        "profileImage": null,
-        "accounts": {
-            "accountNo": "3000000000",
-            "balance": "9980000.0",
-            "lockBalance": "0",
-            "tier": "tier1",
-            "code": "000",
-            "active": true,
-            "isQr": true,
-            "qrodeUrl": ""
-        },
-        "email": "akinsam@gmail.com",
-        "dateRegistered": "2023-06-28T00:58:54.724+00:00"
-    }
-    ```
-
-
-### GET /auth/admin/isme
-
-Retrieve authenticated customer.
-
-- Request:
-  - Method: `GET`
-  - Headers: 
-    - Authorization: `{{Bearer token}}`
-  - Path: `/auth/admin/isme`
-
-- Response:
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-        "profile": {
-            "firstName": "System",
-            "lastName": "Administrator",
-            "imageUrl": null,
-            "permission": [
-                "ddc42b94-3e86-4396-8217-bdcf60e64e37"
-            ],
-            "department": "Admin",
-            "email": "admin@fintabsolution.com"
-        }
-    }
-    ```
-
-### PUT /auth/admin/isme
-
-Retrieve authenticated customer.
-
-- Request:
-  - Method: `PUT`
-  - Headers: 
-    - Authorization: `{{Bearer token}}`
-    - `Content-Type: multipart/form-data`
-  - Path: `/auth/profile`
-  - Body:
-    ```json
-        --boundary
-
-            --boundary
-            Content-Disposition: form-data; name="idData"; filename="profile.jpg"
-            Content-Type: image/jpeg
-
-            --boundary
-            Content-Disposition: form-data; name="modeOfId"
-            passport
-
-            --boundary
-            Content-Disposition: form-data; name="address"
-
-            Lagos Nigeria
-
-            --boundary
-            Content-Disposition: form-data; name="firstName"
-            Firstname
-
-            --boundary
-            Content-Disposition: form-data; name="lastName"
-            Lastname
-            
-            --boundary
-            Content-Disposition: form-data; name="middleName"
-            Middlename
-
-            --boundary
-            Content-Disposition: form-data; name="mobileNumber"
-            mobileNumber
-
-            --boundary  
-            Content-Disposition: form-data; name="profileImage"; filename="profile.jpg"
-            Content-Type: image/jpeg
-
-            [Binary Image Data]
-            --boundary--
-    ```
-
-- Response:
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-        "code": 200,
-        "message": "Profile updated successfully",
-        "status": "successful"
-    }
-    ```
-
-### POST auth/reset/password
-
-Customer reset password can take either the customer account number or email as ``username`` value.
-
-- Request:
-  - Method: `POST`
-  - Path: `auth/reset/password`
-  - Body:
-    ```json
-    {
-        "username": "3000000000"
-    }
-    ```
-
-- Response:
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-        "reference": "sjyirzbw4crr",
-        "message": "Your code has been sent to your register email and mobile number"
-    }
-    ```
-
-### POST /auth/reset/confirm
-
-Customer confirm the password reset with the code sent to the registered email.
-
-- Request:
-  - Method: `POST`
-  - Path: `/auth/reset/confirm`
-  - Body:
-    ```json
-    {
-        "reference": "sjyirzbw4crr",
-        "code": "396258",
-        "newPassword": "123456",
-        "confirmPassword": "123456"
-    }
-    ```
-
-- Response:
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-        "code": 200,
-        "message": "Password reset successfully",
-        "status": "successful"
-    }
-    ```
-
-### POST /auth/change_password
-
-Customer confirm the password reset with the code sent to the registered email.
-
-- Request:
-  - Method: `POST`
-  - Path: `/auth/change_password`
-  - Headers: 
-    - Authorization: `{{Bearer token}}`
-  - Body:
-    ```json
-    {
-        "oldPassword": "12345",
-        "newPassword": "123456",
-        "confirmPassword": "123456"
-    }
-    ```
-
-- Response:
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-        "code": 200,
-        "message": "password change successfully",
-        "status": "successful"
-    }
-    ```
 
 ... and so on for each endpoint.
 

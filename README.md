@@ -30,27 +30,27 @@
         - [Transaction Logs](#transaction-logs)
         - [My Account](#my-accounts)
     - [Admin](#admin)
-    - [Customer](#admin-customer)
-        - [All Customer](#get-user-by-id)
-        - [All Transaction](#get-user-by-id)
-        - [View Account Transaction](#get-user-by-id)
-        - [View Customer Account](#get-user-by-id)
-    - [Staff](#create-user)
-        - [Create Staff](#update-user)
-        - [Update Staff Records](#update-user)
-        - [Assign Permission to Staff](#update-user)
-        - [Revoke Permission from Staff](#update-user)
-        - [All Staff](#update-user)
-    - [Department](#delete-user)
-        - [Create Department](#update-user)
-        - [Update Department](#update-user)
-        - [Delete Department](#update-user)
-        - [All Department](#update-user)
-    - [Permission](#posts)
-        - [Create Permission](#get-all-posts)
-        - [Update Permission](#get-all-posts)
-        - [All Permission](#get-all-posts)
-        - [Delete Permission](#get-all-posts)
+        - [Customer](#customer)
+            - [All Customer](#all-customer)
+            - [All Transaction](#all-transaction)
+            - [View Account Transaction](#view-account-transaction)
+            - [View Customer Account](#view-customer-account)
+        - [Staff](#staff)
+            - [Create Staff](#create-staff)
+            - [Update Staff Record](#update-staff-record)
+            - [Assign Permission to Staff](#assign-permission-to-staff)
+            - [Revoke Permission from Staff](#revoke-permission-from-staff)
+            - [All Staff](#all-staff)
+        - [Department](#department)
+            - [Create Department](#create-department)
+            - [Update Department](#update-department)
+            - [Delete Department](#delete-department)
+            - [All Department](#all-department)
+        - [Permission](#permission)
+            - [Create Permission](#create-permission)
+            - [Update Permission](#update-permission)
+            - [All Permission](#all-permission)
+            - [Delete Permission](#delete-permission)
 
 
 ### Introduction
@@ -665,8 +665,520 @@ Welcome to the documentation for our REST API. This API provides access to vario
                 "accountNumber": "3000000000"
             }
         ```
----
 
+# Admin
+
+### Customer
+
+- [GET /admin/customer](#all-customer): Admin get all customer 
+    - Request:
+        - Method: `GET`
+        - Path: `/admin/customer`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "470f907e-c3e2-41d1-8643-3b501b4d4a16",
+                    "firstName": "Akin",
+                    "lastName": "Sam",
+                    "middleName": null,
+                    "address": null,
+                    "phoneNumber": "08022301473",
+                    "profileImage": null,
+                    "modeOfId": null,
+                    "idData": null,
+                    "verified": false,
+                    "user": {
+                        "id": "03a70177-08f3-4434-aa25-f2e9e493e5e4",
+                        "email": "akinsam@gmail.com",
+                        "isCustomer": true,
+                        "isAdmin": false,
+                        "createdAt": "2023-06-28T00:58:54.724+00:00"
+                    },
+                    "createdAt": "2023-06-28T00:58:54.738+00:00",
+                    "updatedAt": "2023-06-28T00:58:54.738+00:00"
+                }
+            ]
+        ```
+
+### All Transaction
+
+- [GET /admin/customer/transactions](#all-transaction): Admin get all transactions 
+    - Request:
+        - Method: `GET`
+        - Path: `/admin/customer/transactions`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "5a67fd4e-5e20-451b-952c-bc5b51b7a9eb",
+                    "reference": "5V1ER396PTLWJCXS",
+                    "source": "3000000000",
+                    "sourceBank": "100",
+                    "destination": "3000000001",
+                    "destinationBank": "100",
+                    "amount": "20000",
+                    "description": "SAM|Test Payment|SAMSON",
+                    "create_at": "2023-06-28T09:43:15.798+00:00"
+                },
+                {
+                    "id": "100cd1e0-64a4-467c-8b47-209fbd339fb5",
+                    "reference": "QI88AA2ODS5DAYKY",
+                    "source": "3000000000",
+                    "sourceBank": "100",
+                    "destination": "3000000001",
+                    "destinationBank": "100",
+                    "amount": "20000",
+                    "description": "SAM|Test Payment|SAMSON",
+                    "create_at": "2023-06-28T09:47:28.801+00:00"
+                },
+            ]
+        ```
+
+### View Account Transaction
+
+- [GET /admin/customer/account/logs?accountNo={{accountNo}}](#view-account-transaction): Admin view all transactions that happen on a single account.
+
+    - Request:
+        - Method: `GET`
+        - Path: `/admin/customer/account/logs?accountNo={{accountNo}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                
+                {
+                    "id": "5a67fd4e-5e20-451b-952c-bc5b51b7a9eb",
+                    "reference": "5V1ER396PTLWJCXS",
+                    "source": "3000000000",
+                    "sourceBank": "100",
+                    "destination": "3000000001",
+                    "destinationBank": "100",
+                    "amount": "20000",
+                    "description": "SAM|Test Payment|SAMSON",
+                    "create_at": "2023-06-28T09:43:15.798+00:00"
+                },
+                {
+                    "id": "100cd1e0-64a4-467c-8b47-209fbd339fb5",
+                    "reference": "QI88AA2ODS5DAYKY",
+                    "source": "3000000000",
+                    "sourceBank": "100",
+                    "destination": "3000000001",
+                    "destinationBank": "100",
+                    "amount": "20000",
+                    "description": "SAM|Test Payment|SAMSON",
+                    "create_at": "2023-06-28T09:47:28.801+00:00"
+                },
+            ]
+        ```
+
+### View Customer Account
+
+- [GET /admin/customer/{{customerId}}](#view-customer-account): Admin view customer's account.
+
+    - Request:
+        - Method: `GET`
+        - Path: `/admin/customer/{{customerId}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "accountNo": "3000000000",
+                "balance": "9860000.0",
+                "lockBalance": "0",
+                "tier": "tier1",
+                "code": "000",
+                "active": true,
+                "isQr": true,
+                "qrodeUrl": "https://res.cloudinary.com/dhkde_q0no3v.png"
+            }
+        ```
+
+## Staff
+
+### Create Staff
+
+- [POST /admin/staff](#create-staff): Admin Create staff.
+     - Request:
+        - Method: `POST`
+        - Path: `/admin/staff`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "firstName": "John",
+                "lastName": "Doe",
+                "email": "test@gmail.com",
+                "department": "cdd6475e-8ede-4ccb-a87f-cdadaa593324",
+                "permission": ["33b606e8-5925-412f-aff1-f1e63d07de82"]
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Staff created successfully",
+                "status": "successful"
+            }
+        ```
+
+### Update Staff Record
+
+- [PUT /admin/staff/{{staffid}}](#update-staff-record): Admin update staff record.
+     - Request:
+        - Method: `PUT`
+        - Path: `/admin/staff/{{staffid}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "firstName": "John",
+                "lastName": "Doe",
+                "department": "cdd6475e-8ede-4ccb-a87f-cdadaa593324"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Record updated successfully",
+                "status": "successful"
+            }
+        ```
+
+### Assign Permission to Staff
+
+- [PUT /staff/permission/{{staffid}}](#assign-permission-to-staff): Admin grant staff permission.
+     - Request:
+        - Method: `PUT`
+        - Path: `/staff/permission/{{staffid}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "permission": "713abf3f-d595-4774-a4e3-5b6c3bf83e96"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Permission granted successfully",
+                "status": "successful"
+            }
+        ```
+
+### Revoke Permission from Staff
+
+- [GET /admin/staff/permission/{{customerId}}/revoke/{{permissionId}}](#revoke-permission-from-staff): Admin revoke a permission from staff.
+
+    - Request:
+        - Method: `GET`
+        - Path: `/admin/staff/permission/{{customerId}}/revoke/{{permissionId}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Permission revoked successfullly",
+                "status": "success"
+            }
+        ```
+
+### All Staff
+
+- [GET /admin/staff](#all-staff): Admin get all staff.
+
+    - Request:
+        - Method: `GET`
+        - Path: `/admin/staff`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "777f6a3e-72a4-4bac-873b-7e443f34174d",
+                    "firstName": "System",
+                    "lastName": "Administrator",
+                    "department": "9387fc1e-cd58-49ba-823f-bd114c1fabf0",
+                    "profileImage": null,
+                    "permission": [
+                        "713abf3f-d595-4774-a4e3-5b6c3bf83e96"
+                    ],
+                    "user": {
+                        "id": "89e0b8c0-ced2-4bac-920f-368a5df321f8",
+                        "email": "admin@fintabsolution.com",
+                        "isCustomer": false,
+                        "isAdmin": true,
+                        "createdAt": "2023-06-28T21:15:51.233+00:00"
+                    },
+                    "updatedAt": "2023-06-28T21:15:51.245+00:00",
+                    "createdAt": "2023-06-28T21:15:51.245+00:00"
+                },
+                {
+                    "id": "51590060-f1a7-44b6-8816-b1056bb37c18",
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "department": "cdd6475e-8ede-4ccb-a87f-cdadaa593324",
+                    "profileImage": null,
+                    "permission": [
+                        "33b606e8-5925-412f-aff1-f1e63d07de82"
+                    ],
+                    "user": {
+                        "id": "560436ad-6f19-4f71-bf26-dc5ad58f3146",
+                        "email": "jdoe@gmail.com",
+                        "isCustomer": false,
+                        "isAdmin": true,
+                        "createdAt": "2023-06-29T07:35:06.725+00:00"
+                    },
+                    "updatedAt": "2023-06-29T07:35:06.728+00:00",
+                    "createdAt": "2023-06-29T07:35:06.728+00:00"
+                },
+            ]
+        ```
+
+# Department
+
+### Admin Create Department
+
+- [POST /admin/department](#create-department): Admin create department.
+     - Request:
+        - Method: `POST`
+        - Path: `/admin/department`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "name": "Test Department"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Department created",
+                "status": "successful"
+            }
+        ```
+
+### Admin Update Department
+
+- [PUT /admin/department/{{departmentId}}](#update-department): Admin update department.
+     - Request:
+        - Method: `POST`
+        - Path: `/admin/department/{{departmentId}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "name": "New Department Name"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Department updated successfull",
+                "status": "successful"
+            }
+        ```
+
+### Admin Delete Department
+
+- [DELETE /admin/department/{{customerId}}](#delete-department): Admin delete department.
+
+    - Request:
+        - Method: `DELETE`
+        - Path: `/admin/department/{{customerId}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Department deleted successfull",
+                "status": "successful"
+            }
+        ```
+
+
+### Admin Get All Departments
+
+- [GET /admin/department](#all-department): Admin get all departments.
+
+    - Request:
+        - Method: `GET`
+        - Path: `/admin/department`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "9387fc1e-cd58-49ba-823f-bd114c1fabf0",
+                    "name": "admin",
+                    "updatedAt": "2023-06-28T21:15:51.242+00:00",
+                    "createdAt": "2023-06-28T21:15:51.242+00:00"
+                },
+                {
+                    "id": "cdd6475e-8ede-4ccb-a87f-cdadaa593324",
+                    "name": "Test Department",
+                    "updatedAt": "2023-06-29T07:29:45.221+00:00",
+                    "createdAt": "2023-06-29T07:29:45.221+00:00"
+                }
+            ]
+        ```
+
+# Permission
+
+### Admin Create Permission
+- [POST /admin/permission](#create-permission): Admin create permission.
+     - Request:
+        - Method: `POST`
+        - Path: `/admin/permission`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "name": "Create",
+                "role": "create"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Permission created successfully",
+                "status": "successful"
+            }
+        ```
+
+### Admin Get All Permission
+
+- [GET /admin/permission](#all-permission): Admin get all permission.
+     - Request:
+        - Method: `GET`
+        - Path: `/admin/permission`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "713abf3f-d595-4774-a4e3-5b6c3bf83e96",
+                    "name": "admin",
+                    "role": "all",
+                    "updatedAt": "2023-06-28T21:15:51.241+00:00",
+                    "createdAt": "2023-06-28T21:15:51.241+00:00"
+                },
+                {
+                    "id": "33b606e8-5925-412f-aff1-f1e63d07de82",
+                    "name": "Create",
+                    "role": "create",
+                    "updatedAt": "2023-06-29T07:30:59.146+00:00",
+                    "createdAt": "2023-06-29T07:30:59.146+00:00"
+                }
+            ]
+        ```
+
+### Admin Update Permission
+
+- [POST /admin/permission/{{permissionId}}](#update-permission): Admin update permission.
+     - Request:
+        - Method: `POST`
+        - Path: `/admin/permission/{{permissionId}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "name": "Create"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Permission updated successfully",
+                "status": "successful"
+            }
+        ```
+
+### Admin Delete Permission
+
+- [DELETE /admin/permission/{{permissionId}}](#delete-permission): Admin delete permission.
+     - Request:
+        - Method: `DELETE`
+        - Path: `/admin/permission/{{permissionId}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Permission deleted successfully",
+                "status": "successful"
+            }
+        ```
+---
 
 
 ... and so on for each endpoint.

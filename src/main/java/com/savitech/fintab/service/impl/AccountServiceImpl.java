@@ -25,9 +25,6 @@ public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
@@ -49,9 +46,6 @@ public class AccountServiceImpl implements AccountService {
     private FloatFormat floatFormat;
 
     @Autowired
-    private UploadFile uploadFile;
-
-    @Autowired
     private TransactionLogsRepository transactionLogsRepository;
 
     @Autowired
@@ -59,9 +53,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Value("${bank_code}")
     private String bank_code;
-
-    @Autowired
-    private EmailNotification notification;
 
     @Autowired
     private Encryption encryption;

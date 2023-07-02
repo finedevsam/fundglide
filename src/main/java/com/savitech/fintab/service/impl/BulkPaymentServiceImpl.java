@@ -166,8 +166,8 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
 
     @Override
     public List<PaymentBatchDetails> viewBatchDetails(String batchId) {
-        User user = authenticatedUser.auth();
-        Customer customer = customerRepository.findByUserId(user.getId());
+        // User user = authenticatedUser.auth();
+        // Customer customer = customerRepository.findByUserId(user.getId());
         return batchDetailsRepository.findAllByPaymentBatchId(batchId);
     }
 }

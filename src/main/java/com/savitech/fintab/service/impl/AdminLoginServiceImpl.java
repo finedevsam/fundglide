@@ -11,7 +11,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.savitech.fintab.entity.AdminUser;
@@ -32,9 +31,6 @@ public class AdminLoginServiceImpl implements AdminLoginService{
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -69,7 +65,7 @@ public class AdminLoginServiceImpl implements AdminLoginService{
         Map<Object, Object> profile = new HashMap<>();
         Map<Object, Object> auth = new HashMap<>();
         final String token = jwtTokenUtil.generateToken(userDetails);
-        
+
         authenticate(user.getEmail(), adminLoginModel.getPassword());
 
         auth.put("accessToken", token);

@@ -1,12 +1,8 @@
 package com.savitech.fintab.util;
 
 
-import com.savitech.fintab.entity.Account;
-import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.PaymentBatch;
 import com.savitech.fintab.entity.PaymentBatchDetails;
-import com.savitech.fintab.repository.AccountRepository;
-import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.PaymentBatchDetailsRepository;
 import com.savitech.fintab.repository.PaymentBatchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 
 @Component

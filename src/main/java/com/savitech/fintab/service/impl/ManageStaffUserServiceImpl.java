@@ -123,10 +123,12 @@ public class ManageStaffUserServiceImpl implements ManageStaffUserService{
     @Override
     public ResponseEntity<?> allStaff(Pageable pageable) {
         User user = authenticatedUser.auth();
-        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+
         if(!user.getIsAdmin()){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
         }
+
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
 
         if(adminUser.getPermission().size() < 1){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
@@ -147,10 +149,12 @@ public class ManageStaffUserServiceImpl implements ManageStaffUserService{
     @Override
     public ResponseEntity<?> adminUpdateStaff(String Id, UpdateStaffModel updateStaffModel) {
         User user = authenticatedUser.auth();
-        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+
         if(!user.getIsAdmin()){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
         }
+
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
 
         if(adminUser.getPermission().size() < 1){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
@@ -191,10 +195,12 @@ public class ManageStaffUserServiceImpl implements ManageStaffUserService{
     @Override
     public ResponseEntity<?> giveUserPermission(String Id, AddPermissionToStaff permissionToStaff) {
         User user = authenticatedUser.auth();
-        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+
         if(!user.getIsAdmin()){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
         }
+
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
 
         if(adminUser.getPermission().size() < 1){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
@@ -234,10 +240,12 @@ public class ManageStaffUserServiceImpl implements ManageStaffUserService{
     @Override
     public ResponseEntity<?> revokeStaffPermission(String staffId, String permissionId) {
         User user = authenticatedUser.auth();
-        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+        
         if(!user.getIsAdmin()){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
         }
+
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
 
         if(adminUser.getPermission().size() < 1){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);

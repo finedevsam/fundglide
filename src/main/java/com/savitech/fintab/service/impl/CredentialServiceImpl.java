@@ -33,6 +33,10 @@ public class CredentialServiceImpl implements CredentialService {
         // Get Authenticated User
         User user = authenticatedUser.auth();
 
+        if(!user.getIsCustomer()){
+            return response.failResponse("Permissiion denied", HttpStatus.BAD_REQUEST);
+        }
+
         Credential credential = credentialRepository.findByUserId(user.getId());
 
         boolean isPinNumeric = pin.getPin().matches("\\d+");

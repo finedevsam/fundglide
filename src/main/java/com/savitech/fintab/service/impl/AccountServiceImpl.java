@@ -63,6 +63,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public ResponseEntity<?> myAccounts() {
         User user = authenticatedUser.auth();
+        if(!user.getIsCustomer()){
+            return response.failResponse("Permissiion denied", HttpStatus.BAD_REQUEST);
+        }
+
         Customer customer = customerRepository.findByUserId(user.getId());
         Account account = accountRepository.findAccountsByCustomerId(customer.getId());
 

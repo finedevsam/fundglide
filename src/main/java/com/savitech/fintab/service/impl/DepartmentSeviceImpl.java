@@ -117,11 +117,12 @@ public class DepartmentSeviceImpl implements DepartmentService{
     @Override
     public ResponseEntity<?> deleteDepartment(String Id) {
         User user = authenticatedUser.auth();
-        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
 
         if(!user.getIsAdmin()){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
         }
+        
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
 
         if(adminUser.getPermission().size() < 1){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);

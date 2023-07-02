@@ -65,6 +65,11 @@ public class BulkPaymentServiceImpl implements BulkPaymentService {
     public ResponseEntity<?> bulkPayment(BulkPayment bulk) {
         DataFormatter dataFormatter = new DataFormatter();
         User user = authenticatedUser.auth();
+
+        if(!user.getIsCustomer()){
+            return response.failResponse("Permissiion denied", HttpStatus.BAD_REQUEST);
+        }
+
         Credential credential = credentialRepository.findByUserId(user.getId());
         Customer customer = customerRepository.findByUserId(user.getId());
         if(!passwordEncoder.matches(bulk.getTransactionPin(), credential.getPin())){

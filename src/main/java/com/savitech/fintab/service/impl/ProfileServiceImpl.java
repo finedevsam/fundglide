@@ -69,6 +69,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ResponseEntity<?> updateProfile(UpdateProfile profile) {
         User user = authenticatedUser.auth();
+
+        if(!user.getIsCustomer()){
+            return response.failResponse("Permissiion denied", HttpStatus.BAD_REQUEST);
+        }
+
         Customer customer = customerRepository.findByUserId(user.getId());
 
         List<String> acceptedIDType = new ArrayList<>();
@@ -180,6 +185,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ResponseEntity<?> loggedInUser() {
         User user = authenticatedUser.auth();
+        
+        if(!user.getIsCustomer()){
+            return response.failResponse("Permissiion denied", HttpStatus.BAD_REQUEST);
+        }
+
         Optional<Customer> customer = customerRepository.findCustomerByUserId(user.getId());
         Account account = accountRepository.findAccountByCustomerId(customer.get().getId());
 
@@ -202,6 +212,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ResponseEntity<?> changePassword(ChangePassword changePassword) {
         User user = authenticatedUser.auth();
+
+        if(!user.getIsCustomer()){
+            return response.failResponse("Permissiion denied", HttpStatus.BAD_REQUEST);
+        }
+
         Customer customer = customerRepository.findByUserId(user.getId());
         if (!ObjectUtils.isEmpty(changePassword)){
             if(Objects.equals(changePassword.getNewPassword(), changePassword.getConfirmPassword())) {
@@ -227,6 +242,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ResponseEntity<?> activateQRCodePayment() {
         User user = authenticatedUser.auth();
+
+        if(!user.getIsCustomer()){
+            return response.failResponse("Permissiion denied", HttpStatus.BAD_REQUEST);
+        }
+
         Customer customer = customerRepository.findByUserId(user.getId());
         Account account = accountRepository.findAccountByCustomerId(customer.getId());
         if(account.getIsQr()){

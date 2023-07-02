@@ -51,6 +51,10 @@
             - [Update Permission](#update-permission)
             - [All Permission](#all-permission)
             - [Delete Permission](#delete-permission)
+        - [Loan](#loan)
+            - [Create Loan Type](#create-loan-type)
+            - [Update Loan Type](#update-loan-type)
+            - [All Loan Type](#all-loan-type)
 
 
 ### Introduction
@@ -1177,6 +1181,87 @@ Welcome to the documentation for our REST API. This API provides access to vario
                 "message": "Permission deleted successfully",
                 "status": "successful"
             }
+        ```
+
+# Loan
+
+### Create Loan Type
+- [POST /loan](#create-loan-type): Admin create Loan Type.
+     - Request:
+        - Method: `POST`
+        - Path: `/loan`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "name": "Quick Loan",
+                "tenure": "1",
+                "rate": "4"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Loan type created",
+                "status": "successful"
+            }
+        ```
+
+### Update Loan Type
+
+- [PUT /loan/{{id}}](#update-loan-type): Admin update loan Type.
+     - Request:
+        - Method: `PUT`
+        - Path: `/loan/{{id}}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        - Body:
+            ```json
+            {
+                "name": "Quick Loan Update",
+                "tenure": "1",
+                "rate": "4"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Loan type updated successfully",
+                "status": "successful"
+            }
+        ```
+
+### Update Loan Type
+
+- [GET /loan](#all-loan-type): All Loan Type.
+     - Request:
+        - Method: `GET`
+        - Path: `/loan`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "b7aaccea-5762-4089-b700-e0da7676458b",
+                    "name": "Quick Loan Update",
+                    "code": "J925H70",
+                    "tenure": "1",
+                    "rate": "4",
+                    "updatedAt": "2023-07-02T06:56:45.436+00:00",
+                    "createdAt": "2023-07-02T06:28:31.110+00:00"
+                }
+            ]
         ```
 ---
 

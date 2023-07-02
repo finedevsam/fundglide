@@ -1238,7 +1238,7 @@ Welcome to the documentation for our REST API. This API provides access to vario
             }
         ```
 
-### Update Loan Type
+### All Loan Type
 
 - [GET /loan](#all-loan-type): All Loan Type.
      - Request:

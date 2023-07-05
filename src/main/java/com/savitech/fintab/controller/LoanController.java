@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.savitech.fintab.entity.impl.ApplyForLoan;
 import com.savitech.fintab.entity.impl.LoanTypeModel;
 import com.savitech.fintab.service.impl.LoanServiceImpl;
 
@@ -34,6 +35,16 @@ public class LoanController {
     @PutMapping("/{Id}")
     public ResponseEntity<?> updateLoanType(@PathVariable String Id, @RequestBody LoanTypeModel loanTypeModel){
         return loanServiceImpl.updateLoanType(Id, loanTypeModel);
+    }
+
+    @PostMapping("/apply")
+    public ResponseEntity<?> customerApplyForLoan(@RequestBody ApplyForLoan loan){
+        return loanServiceImpl.applyForLoan(loan);
+    }
+
+    @GetMapping("/customer")
+    public ResponseEntity<?> myLoan(Pageable pageable){
+        return loanServiceImpl.myLoans(pageable);
     }
     
 }

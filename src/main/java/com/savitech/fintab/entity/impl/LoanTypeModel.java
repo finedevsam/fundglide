@@ -13,4 +13,7 @@ public class LoanTypeModel {
 
     @NotBlank(message = "please enter rate")
     private String rate;
+
+    @NotBlank(message = "please enter code")
+    private String code;
 }

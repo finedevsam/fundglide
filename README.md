@@ -1269,7 +1269,7 @@ Welcome to the documentation for our REST API. This API provides access to vario
 
 ### Apply for Loan
 
-- [POST /loan/apply](#apply-for-loan): All Loan Type.
+- [POST /loan/apply](#apply-for-loan): Customer apply for loan.
      - Request:
         - Method: `POST`
         - Path: `/loan/apply`

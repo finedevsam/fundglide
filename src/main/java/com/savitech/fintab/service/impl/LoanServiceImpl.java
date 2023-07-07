@@ -225,6 +225,7 @@ public class LoanServiceImpl implements LoanService{
                 customerLoanBreakDown.setPaymentAmount(repayment.getRepaymentAmount());
                 customerLoanBreakDown.setInterest(repayment.getInterestAmount());
                 customerLoanBreakDown.setCustomerLoan(customerLoan);
+                customerLoanBreakDown.setCustomer(customer);
                 data.add(customerLoanBreakDown);
             }
             customerLoanRepository.save(customerLoan);
@@ -243,6 +244,17 @@ public class LoanServiceImpl implements LoanService{
         Customer customer = customerRepository.findByUserId(user.getId());
 
         return ResponseEntity.ok().body(customerLoanRepository.findAllCustomerLoanByCustomerId(customer.getId(), pageable));
+    }
+
+    @Override
+    public ResponseEntity<?> viewLoanBreakdown(String loanId) {
+        User user = authenticatedUser.auth();
+        if(!user.getIsCustomer()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+        Customer customer = customerRepository.findByUserId(user.getId());
+
+        return ResponseEntity.ok().body(customerLoanBreakDownRepository.findAllCustomerLoanBreakDownsByCustomerLoanIdAndCustomerId(loanId, customer.getId()));
     }
     
 }

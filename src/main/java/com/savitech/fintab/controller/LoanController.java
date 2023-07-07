@@ -46,5 +46,10 @@ public class LoanController {
     public ResponseEntity<?> myLoan(Pageable pageable){
         return loanServiceImpl.myLoans(pageable);
     }
+
+    @GetMapping("/breakdown/{loanId}")
+    public ResponseEntity<?> viewLoanBreakDown(@PathVariable String loanId){
+        return loanServiceImpl.viewLoanBreakdown(loanId);
+    }
     
 }

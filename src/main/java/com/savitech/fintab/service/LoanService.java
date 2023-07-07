@@ -16,4 +16,6 @@ public interface LoanService {
     ResponseEntity<?> applyForLoan(ApplyForLoan loan);
 
     ResponseEntity<?> myLoans(Pageable pageable);
+
+    ResponseEntity<?> viewLoanBreakdown(String loanId);
 }

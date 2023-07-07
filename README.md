@@ -55,6 +55,9 @@
             - [Create Loan Type](#create-loan-type)
             - [Update Loan Type](#update-loan-type)
             - [All Loan Type](#all-loan-type)
+            - [Customer Apply for Loan](#apply-for-loan)
+            - [Customer Loan](#customer-loan)
+            - [View Loan Breakdown](#loan-breakdown)
 
 
 ### Introduction
@@ -1260,6 +1263,104 @@ Welcome to the documentation for our REST API. This API provides access to vario
                     "rate": "4",
                     "updatedAt": "2023-07-02T06:56:45.436+00:00",
                     "createdAt": "2023-07-02T06:28:31.110+00:00"
+                }
+            ]
+        ```
+
+### Apply for Loan
+
+- [POST /loan/apply](#apply-for-loan): All Loan Type.
+     - Request:
+        - Method: `POST`
+        - Path: `/loan/apply`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Body:
+            ```json
+            {
+                "loanId": "b7aaccea-5762-4089-b700-e0da7676458b",
+	            "amount": "10000"
+            }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Loan booked successfully and pending approval",
+                "status": "successful"
+            }
+        ```
+
+### Customer Loans
+
+- [GET /loan/customer](#customer-loan): All Customer Loan.
+     - Request:
+        - Method: `GET`
+        - Path: `/loan/customer`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "a761b52d-c842-48c6-8113-b0411bf75396",
+                    "loanType": {
+                        "id": "b7aaccea-5762-4089-b700-e0da7676458b",
+                        "name": "Quick Loan Update",
+                        "code": "AMTZ",
+                        "tenure": "12",
+                        "rate": "4",
+                        "updatedAt": "2023-07-04T23:55:33.813+00:00",
+                        "createdAt": "2023-07-02T06:28:31.110+00:00"
+                    },
+                    "loanReference": "6I3T531F15",
+                    "loanAmount": "10000",
+                    "approvedBy": null,
+                    "approved": false
+                }
+            ]
+        ```
+
+### View Customer Loan Breakdowns
+
+- [GET /loan/breakdown/{id}](#loan-breakdown): View Customer Loan Breakdowns.
+     - Request:
+        - Method: `GET`
+        - Path: `/loan/breakdown/{id}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "f65d9e77-50e2-47e9-bd14-5e43221020ff",
+                    "dueDate": "2023-08-06T23:00:00.000+00:00",
+                    "paymentAmount": 851.5,
+                    "interest": 33.33,
+                    "paid": false
+                },
+                {
+                    "id": "1e38bea9-0fa9-4724-a023-35481c4cfb72",
+                    "dueDate": "2023-09-06T23:00:00.000+00:00",
+                    "paymentAmount": 851.5,
+                    "interest": 30.61,
+                    "paid": false
+                },
+                {
+                    "id": "c25210e6-742c-489f-9538-361b945d957a",
+                    "dueDate": "2023-10-06T23:00:00.000+00:00",
+                    "paymentAmount": 851.5,
+                    "interest": 27.87,
+                    "paid": false
                 }
             ]
         ```

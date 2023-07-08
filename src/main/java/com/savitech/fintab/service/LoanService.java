@@ -22,4 +22,6 @@ public interface LoanService {
     ResponseEntity<?> adminAllCustomerLoan(Pageable pageable);
 
     ResponseEntity<?> adminViewLoanBreakdown(String loanId);
+
+    ResponseEntity<?> approveLoan(String loanId);
 }

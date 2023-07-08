@@ -10,4 +10,6 @@ import com.savitech.fintab.entity.CustomerLoan;
 public interface CustomerLoanRepository extends JpaRepository <CustomerLoan, String>{
     
     List<CustomerLoan> findAllCustomerLoanByCustomerId(String id, Pageable pageable);
+
+    CustomerLoan findCustomerLoanById(String Id);
 }

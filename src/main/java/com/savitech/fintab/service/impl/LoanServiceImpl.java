@@ -157,14 +157,6 @@ public class LoanServiceImpl implements LoanService{
 
     @Override
     public ResponseEntity<?> allLoan(Pageable pageable) {
-        double loanAmount = 10000; // Example loan amount
-        double annualInterestRate = 5.0; // Example annual interest rate
-        int loanTermMonths = 12; // Loan term in months
-
-        List<RepaymentBreakdownBasicLoan> breakdown = loanRepaymentCalculator.calculateLoanRepaymentBreakdown(loanAmount, annualInterestRate, loanTermMonths);
-        for (RepaymentBreakdownBasicLoan repayment : breakdown) {
-            System.out.println("Payment Date: " + repayment.getPaymentDate() + ", Repayment Amount: $" + repayment.getRepaymentAmount());
-         }
         return ResponseEntity.ok().body(loanTypeRepository.findAll(pageable).toList());
     }
 
@@ -476,6 +468,41 @@ public class LoanServiceImpl implements LoanService{
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok().body(customerLoanBreakDownRepository.findAllCustomerLoanBreakDownsByCustomerLoanId(loanId));
+    }
+
+    @Override
+    public ResponseEntity<?> approveLoan(String loanId) {
+        User user = authenticatedUser.auth();
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+
+        if(adminUser.getPermission().size() < 1){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+
+        List<String> createPermissionlist = Arrays.asList("all", "authoriser");
+        
+        List<String> myPermission = adminUser.getPermission();
+        for(String id: myPermission){
+            if(!createPermissionlist.contains(helper.getRole(id))){
+                return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+            }
+        }
+        CustomerLoan customerLoan = customerLoanRepository.findCustomerLoanById(loanId);
+        if(Objects.equals(customerLoan, null)){
+            return response.failResponse("invalid id", HttpStatus.BAD_REQUEST);
+        }
+
+        if(Objects.equals(customerLoan.isApproved(), true)){
+            return response.failResponse("Loan application has already been approved", HttpStatus.BAD_REQUEST);
+        }
+
+        customerLoan.setApproved(true);
+        customerLoan.setApprovedBy(String.format("%s %s", adminUser.getLastName().toUpperCase(), adminUser.getFirstName().toUpperCase()));
+        customerLoanRepository.save(customerLoan);
+        return response.successResponse("loan approved successfully", HttpStatus.OK);
     }
     
 }

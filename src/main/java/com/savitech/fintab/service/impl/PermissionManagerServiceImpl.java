@@ -80,7 +80,7 @@ public class PermissionManagerServiceImpl implements PermissionManagerService{
     
 
     private Boolean checkRoleType(String role){
-        List<String> list = Arrays.asList("create", "delete", "update", "approval");
+        List<String> list = Arrays.asList("create", "delete", "update", "authoriser");
         if(list.contains(role)){
             return true;
         }

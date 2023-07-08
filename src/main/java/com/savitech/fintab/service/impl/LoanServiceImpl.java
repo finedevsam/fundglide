@@ -42,7 +42,9 @@ import com.savitech.fintab.util.IncomeDrivenLoanRepaymentCalculator;
 import com.savitech.fintab.util.InterestOnlyLoanBreakDown;
 import com.savitech.fintab.util.InterestOnlyLoanRepaymentCalculator;
 import com.savitech.fintab.util.LoanRepaymentCalculator;
+import com.savitech.fintab.util.LoanRepaymentCalculatorReducingBalance;
 import com.savitech.fintab.util.RandomStringGenerator;
+import com.savitech.fintab.util.ReducingBalanceLoanBreakDown;
 import com.savitech.fintab.util.RepaymentBreakdownBasicLoan;
 import com.savitech.fintab.util.Response;
 
@@ -99,6 +101,9 @@ public class LoanServiceImpl implements LoanService{
     @Autowired
     private InterestOnlyLoanRepaymentCalculator interestOnlyLoanRepaymentCalculator;
 
+    @Autowired
+    private LoanRepaymentCalculatorReducingBalance reducingBalanceLoanCalculator;
+
     @Override
     public ResponseEntity<?> createLoanType(LoanTypeModel loanTypeModel) {
         User user = authenticatedUser.auth();
@@ -135,9 +140,9 @@ public class LoanServiceImpl implements LoanService{
             return response.failResponse("loan name, rate or tenure can't be empty", HttpStatus.BAD_REQUEST);
         }
 
-        List<String> acceptedLoanCode = Arrays.asList("AMTZ", "BALL", "DEFF", "FIXD", "INCM", "INTR", "REDB");
+        List<String> acceptedLoanCode = Arrays.asList("AMTZ", "BALL", "DEFF", "FIXD", "INCM", "INTR", "REDB", "BASC");
         if(!acceptedLoanCode.contains(loanTypeModel.getCode())){
-            return response.failResponse("Invalid loan code ['AMTZ', 'BALL', 'DEFF', 'FIXD', 'INCM', 'INTR', 'REDB']", HttpStatus.BAD_REQUEST);
+            return response.failResponse("Invalid loan code ['AMTZ', 'BALL', 'DEFF', 'FIXD', 'INCM', 'INTR', 'REDB', 'BASC']", HttpStatus.BAD_REQUEST);
         }
 
         LoanType loanType = new LoanType();
@@ -386,8 +391,49 @@ public class LoanServiceImpl implements LoanService{
                     customerLoanBreakDownRepository.saveAll(interestData);
                     dataResponse = response.successResponse("Loan booked successfully and pending approval", HttpStatus.OK);
                 }
+            case "REDB":
+                customerLoan.setLoanAmount(loan.getAmount());
+                customerLoan.setLoanType(loanType);
+                customerLoan.setLoanReference(stringGenerator.generateReference(10));
+                customerLoan.setCustomer(customer);
+                List<CustomerLoanBreakDown> reducingData = new ArrayList<>();
+                List<ReducingBalanceLoanBreakDown> reducingBalance = reducingBalanceLoanCalculator.calculateLoanRepaymentBreakdown(Double.parseDouble(loan.getAmount()), Double.parseDouble(loanType.getRate()), Integer.parseInt(loanType.getTenure()));
+                for(ReducingBalanceLoanBreakDown repayment : reducingBalance){
+                    CustomerLoanBreakDown customerLoanBreakDown = new CustomerLoanBreakDown();
+                    Date date = dateFormat.parse(repayment.getPaymentDate());
+                    customerLoanBreakDown.setCustomer(customer);
+                    customerLoanBreakDown.setCustomerLoan(customerLoan);
+                    customerLoanBreakDown.setDueDate(date);
+                    customerLoanBreakDown.setInterest(repayment.getRepaymentInterest().doubleValue());
+                    customerLoanBreakDown.setPaymentAmount(repayment.getRepaymentAmount());
+                    reducingData.add(customerLoanBreakDown);
+
+                }
+                customerLoanRepository.save(customerLoan);
+                customerLoanBreakDownRepository.saveAll(reducingData);
+                dataResponse = response.successResponse("Loan booked successfully and pending approval", HttpStatus.OK);
+            case "BASC":
+                customerLoan.setLoanAmount(loan.getAmount());
+                customerLoan.setLoanType(loanType);
+                customerLoan.setLoanReference(stringGenerator.generateReference(10));
+                customerLoan.setCustomer(customer);
+                List<CustomerLoanBreakDown> BasicData = new ArrayList<>();
+                List<RepaymentBreakdownBasicLoan> basicLoan = loanRepaymentCalculator.calculateLoanRepaymentBreakdown(Double.parseDouble(loan.getAmount()), Double.parseDouble(loanType.getRate()), Integer.parseInt(loanType.getTenure()));
+                for(RepaymentBreakdownBasicLoan repayment : basicLoan){
+                    CustomerLoanBreakDown customerLoanBreakDown = new CustomerLoanBreakDown();
+                    Date date = dateFormat.parse(repayment.getPaymentDate());
+                    customerLoanBreakDown.setCustomer(customer);
+                    customerLoanBreakDown.setCustomerLoan(customerLoan);
+                    customerLoanBreakDown.setDueDate(date);
+                    customerLoanBreakDown.setPaymentAmount(repayment.getRepaymentAmount());
+                    customerLoanBreakDown.setInterest(repayment.getInterestAmount());
+                    BasicData.add(customerLoanBreakDown);
+                }
+                customerLoanRepository.save(customerLoan);
+                customerLoanBreakDownRepository.saveAll(BasicData);
+                dataResponse = response.successResponse("Loan booked successfully and pending approval", HttpStatus.OK);
             default:
-                break;
+                dataResponse = response.failResponse("something went wrong", HttpStatus.BAD_REQUEST);
         }
         return dataResponse;
     }
@@ -412,6 +458,24 @@ public class LoanServiceImpl implements LoanService{
         Customer customer = customerRepository.findByUserId(user.getId());
 
         return ResponseEntity.ok().body(customerLoanBreakDownRepository.findAllCustomerLoanBreakDownsByCustomerLoanIdAndCustomerId(loanId, customer.getId()));
+    }
+
+    @Override
+    public ResponseEntity<?> adminAllCustomerLoan(Pageable pageable) {
+        User user = authenticatedUser.auth();
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().body(customerLoanRepository.findAll(pageable).toList());
+    }
+
+    @Override
+    public ResponseEntity<?> adminViewLoanBreakdown(String loanId) {
+        User user = authenticatedUser.auth();
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().body(customerLoanBreakDownRepository.findAllCustomerLoanBreakDownsByCustomerLoanId(loanId));
     }
     
 }

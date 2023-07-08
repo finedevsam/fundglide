@@ -18,4 +18,8 @@ public interface LoanService {
     ResponseEntity<?> myLoans(Pageable pageable);
 
     ResponseEntity<?> viewLoanBreakdown(String loanId);
+
+    ResponseEntity<?> adminAllCustomerLoan(Pageable pageable);
+
+    ResponseEntity<?> adminViewLoanBreakdown(String loanId);
 }

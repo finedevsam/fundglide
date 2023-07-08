@@ -7,23 +7,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+
+@Service
 public class FixedPrincipalLoanRepaymentCalculator {
-    public static void main(String[] args) {
-        double loanAmount = 10000; // Example loan amount
-        double annualInterestRate = 5.0; // Example annual interest rate
-        int loanTermMonths = 12; // Loan term in months
 
-        List<RepaymentBreakdown> breakdown = calculateFixedPrincipalLoanRepayment(loanAmount, annualInterestRate, loanTermMonths);
-
-        // Print the breakdown
-        for (RepaymentBreakdown repayment : breakdown) {
-            System.out.println("Payment Date: " + repayment.getPaymentDate() + ", Repayment Amount: $" + repayment.getRepaymentAmount()
-                    + ", Principal Amount: $" + repayment.getPrincipalAmount() + ", Interest Amount: $" + repayment.getInterestAmount());
-        }
-    }
-
-    public static List<RepaymentBreakdown> calculateFixedPrincipalLoanRepayment(double loanAmount, double annualInterestRate, int loanTermMonths) {
-        List<RepaymentBreakdown> breakdown = new ArrayList<>();
+    public List<FixedPrincipalLoanBreakDown> calculateFixedPrincipalLoanRepayment(double loanAmount, double annualInterestRate, int loanTermMonths) {
+        List<FixedPrincipalLoanBreakDown> breakdown = new ArrayList<>();
         BigDecimal monthlyInterestRate = BigDecimal.valueOf(annualInterestRate).divide(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);
         BigDecimal monthlyPrincipal = BigDecimal.valueOf(loanAmount).divide(BigDecimal.valueOf(loanTermMonths), 2, RoundingMode.HALF_UP);
         BigDecimal remainingBalance = BigDecimal.valueOf(loanAmount);
@@ -35,41 +26,15 @@ public class FixedPrincipalLoanRepaymentCalculator {
             BigDecimal interestAmount = remainingBalance.multiply(monthlyInterestRate).setScale(2, RoundingMode.HALF_UP);
             BigDecimal principalAmount = monthlyPrincipal;
             remainingBalance = remainingBalance.subtract(principalAmount).setScale(2, RoundingMode.HALF_UP);
-            RepaymentBreakdown repayment = new RepaymentBreakdown(formattedDate, principalAmount.doubleValue() + interestAmount.doubleValue(), principalAmount.doubleValue(), interestAmount.doubleValue());
+            
+            FixedPrincipalLoanBreakDown repayment = new FixedPrincipalLoanBreakDown();
+            repayment.setPaymentDate(formattedDate);
+            repayment.setRepaymentAmount(principalAmount.doubleValue() + interestAmount.doubleValue());
+            repayment.setPrincipalAmount(principalAmount.doubleValue());
+            repayment.setInterestAmount(interestAmount.doubleValue());
             breakdown.add(repayment);
         }
 
         return breakdown;
     }
 }
-
-class RepaymentBreakdown {
-    private String paymentDate;
-    private double repaymentAmount;
-    private double principalAmount;
-    private double interestAmount;
-
-    public RepaymentBreakdown(String paymentDate, double repaymentAmount, double principalAmount, double interestAmount) {
-        this.paymentDate = paymentDate;
-        this.repaymentAmount = repaymentAmount;
-        this.principalAmount = principalAmount;
-        this.interestAmount = interestAmount;
-    }
-
-    public String getPaymentDate() {
-        return paymentDate;
-    }
-
-    public double getRepaymentAmount() {
-        return repaymentAmount;
-    }
-
-    public double getPrincipalAmount() {
-        return principalAmount;
-    }
-
-    public double getInterestAmount() {
-        return interestAmount;
-    }
-}
-

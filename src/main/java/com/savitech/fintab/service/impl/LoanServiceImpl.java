@@ -34,7 +34,13 @@ import com.savitech.fintab.util.BalloonLoanBreakdown;
 import com.savitech.fintab.util.BalloonLoanRepaymentCalculator;
 import com.savitech.fintab.util.DeferredLoanRepaymentCalculator;
 import com.savitech.fintab.util.DefferedLoanBreakDown;
+import com.savitech.fintab.util.FixedPrincipalLoanBreakDown;
+import com.savitech.fintab.util.FixedPrincipalLoanRepaymentCalculator;
 import com.savitech.fintab.util.Helper;
+import com.savitech.fintab.util.IncomeDrivenLoanBreakDown;
+import com.savitech.fintab.util.IncomeDrivenLoanRepaymentCalculator;
+import com.savitech.fintab.util.InterestOnlyLoanBreakDown;
+import com.savitech.fintab.util.InterestOnlyLoanRepaymentCalculator;
 import com.savitech.fintab.util.LoanRepaymentCalculator;
 import com.savitech.fintab.util.RandomStringGenerator;
 import com.savitech.fintab.util.RepaymentBreakdownBasicLoan;
@@ -83,6 +89,15 @@ public class LoanServiceImpl implements LoanService{
 
     @Autowired
     private DeferredLoanRepaymentCalculator deferredLoanRepaymentCalculator;
+
+    @Autowired
+    private FixedPrincipalLoanRepaymentCalculator fixedPrincipalLoanRepaymentCalculator;
+
+    @Autowired
+    private IncomeDrivenLoanRepaymentCalculator incomeDrivenLoanRepaymentCalculator;
+
+    @Autowired
+    private InterestOnlyLoanRepaymentCalculator interestOnlyLoanRepaymentCalculator;
 
     @Override
     public ResponseEntity<?> createLoanType(LoanTypeModel loanTypeModel) {
@@ -298,7 +313,79 @@ public class LoanServiceImpl implements LoanService{
                     customerLoanBreakDownRepository.saveAll(defferedData);
                     dataResponse = response.successResponse("Loan booked successfully and pending approval", HttpStatus.OK);
                 }
-        
+            
+            case "FIXD":
+                customerLoan.setLoanAmount(loan.getAmount());
+                customerLoan.setLoanType(loanType);
+                customerLoan.setLoanReference(stringGenerator.generateReference(10));
+                customerLoan.setCustomer(customer);
+                List<CustomerLoanBreakDown> fixedData = new ArrayList<>();
+                List<FixedPrincipalLoanBreakDown> fixedBreakDown = fixedPrincipalLoanRepaymentCalculator.calculateFixedPrincipalLoanRepayment(Double.parseDouble(loan.getAmount()), Double.parseDouble(loanType.getRate()), Integer.parseInt(loanType.getTenure()));
+                for(FixedPrincipalLoanBreakDown repayment : fixedBreakDown){
+                    CustomerLoanBreakDown customerLoanBreakDown = new CustomerLoanBreakDown();
+                    Date date = dateFormat.parse(repayment.getPaymentDate());
+                    customerLoanBreakDown.setCustomer(customer);
+                    customerLoanBreakDown.setCustomerLoan(customerLoan);
+                    customerLoanBreakDown.setDueDate(date);
+                    customerLoanBreakDown.setPaymentAmount(repayment.getRepaymentAmount());
+                    customerLoanBreakDown.setInterest(repayment.getInterestAmount());
+                    fixedData.add(customerLoanBreakDown);
+            
+                }
+                customerLoanRepository.save(customerLoan);
+                customerLoanBreakDownRepository.saveAll(fixedData);
+                dataResponse = response.successResponse("Loan booked successfully and pending approval", HttpStatus.OK);
+            
+            case "INCM":
+                if(Objects.equals(loan.getOther(), "") || Objects.equals(loan.getOther(), null)){
+                    return response.failResponse("Please enter the income percentage", HttpStatus.BAD_REQUEST);
+                }else{
+                    customerLoan.setLoanAmount(loan.getAmount());
+                    customerLoan.setLoanType(loanType);
+                    customerLoan.setLoanReference(stringGenerator.generateReference(10));
+                    customerLoan.setCustomer(customer);
+                    List<CustomerLoanBreakDown> incomeData = new ArrayList<>();
+                    List<IncomeDrivenLoanBreakDown> incomeDrivenLoan = incomeDrivenLoanRepaymentCalculator.calculateIncomeDrivenLoanRepayment(Double.parseDouble(loan.getAmount()), Double.parseDouble(loanType.getRate()), Integer.parseInt(loanType.getTenure()), Double.parseDouble(loan.getOther()));
+                    for(IncomeDrivenLoanBreakDown repayment : incomeDrivenLoan){
+                        CustomerLoanBreakDown customerLoanBreakDown = new CustomerLoanBreakDown();
+                        Date date = dateFormat.parse(repayment.getPaymentDate());
+                        customerLoanBreakDown.setCustomer(customer);
+                        customerLoanBreakDown.setCustomerLoan(customerLoan);
+                        customerLoanBreakDown.setDueDate(date);
+                        customerLoanBreakDown.setPaymentAmount(repayment.getRepaymentAmount());
+                        customerLoanBreakDown.setInterest(repayment.getInterestAmount());
+                        incomeData.add(customerLoanBreakDown);
+                    }
+                    customerLoanRepository.save(customerLoan);
+                    customerLoanBreakDownRepository.saveAll(incomeData);
+                    dataResponse = response.successResponse("Loan booked successfully and pending approval", HttpStatus.OK);
+                }
+            
+            case "INTR":
+                if(Objects.equals(loan.getOther(), "") || Objects.equals(loan.getOther(), null)){
+                    return response.failResponse("Please enter the income percentage", HttpStatus.BAD_REQUEST);
+                }else{
+                    customerLoan.setLoanAmount(loan.getAmount());
+                    customerLoan.setLoanType(loanType);
+                    customerLoan.setLoanReference(stringGenerator.generateReference(10));
+                    customerLoan.setCustomer(customer);
+                    List<CustomerLoanBreakDown> interestData = new ArrayList<>();
+                    List<InterestOnlyLoanBreakDown> interestOnlyLoan = interestOnlyLoanRepaymentCalculator.calculateInterestOnlyLoanRepayment(Double.parseDouble(loan.getAmount()), Double.parseDouble(loanType.getRate()), Integer.parseInt(loan.getOther()), Integer.parseInt(loanType.getTenure()));
+
+                    for(InterestOnlyLoanBreakDown repayment : interestOnlyLoan){
+                        CustomerLoanBreakDown customerLoanBreakDown = new CustomerLoanBreakDown();
+                        Date date = dateFormat.parse(repayment.getPaymentDate());
+                        customerLoanBreakDown.setCustomer(customer);
+                        customerLoanBreakDown.setCustomerLoan(customerLoan);
+                        customerLoanBreakDown.setDueDate(date);
+                        customerLoanBreakDown.setPaymentAmount(repayment.getRepaymentAmount());
+                        customerLoanBreakDown.setInterest(repayment.getInterestAmount());
+                        interestData.add(customerLoanBreakDown);
+                    }
+                    customerLoanRepository.save(customerLoan);
+                    customerLoanBreakDownRepository.saveAll(interestData);
+                    dataResponse = response.successResponse("Loan booked successfully and pending approval", HttpStatus.OK);
+                }
             default:
                 break;
         }

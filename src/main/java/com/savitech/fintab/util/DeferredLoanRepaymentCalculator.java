@@ -11,21 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DeferredLoanRepaymentCalculator {
-    // public static void main(String[] args) {
-    //     double loanAmount = 10000; // Example loan amount
-    //     double annualInterestRate = 5.0; // Example annual interest rate
-    //     int loanTermMonths = 12; // Loan term in months
-    //     int defermentMonths = 6; // Number of months for deferment
-
-    //     List<RepaymentBreakdown> breakdown = calculateDeferredLoanRepayment(loanAmount, annualInterestRate, loanTermMonths, defermentMonths);
-
-    //     // Print the breakdown
-    //     for (RepaymentBreakdown repayment : breakdown) {
-    //         System.out.println("Payment Date: " + repayment.getPaymentDate() + ", Repayment Amount: $" + repayment.getRepaymentAmount()
-    //                 + ", Principal Amount: $" + repayment.getPrincipalAmount() + ", Interest Amount: $" + repayment.getInterestAmount());
-    //     }
-    // }
-
+    
     public List<DefferedLoanBreakDown> calculateDeferredLoanRepayment(double loanAmount, double annualInterestRate, int loanTermMonths, int defermentMonths) {
         List<DefferedLoanBreakDown> breakdown = new ArrayList<>();
         BigDecimal monthlyInterestRate = BigDecimal.valueOf(annualInterestRate).divide(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);

@@ -11,19 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AmortizingLoanRepaymentCalculator {
-    // public static void main(String[] args) {
-    //     double loanAmount = 10000; // Example loan amount
-    //     double annualInterestRate = 5.0; // Example annual interest rate
-    //     int loanTermMonths = 12; // Loan term in months
-
-    //     List<AmortizingRepaymentBreakdown> breakdown = calculateAmortizingLoanRepayment(loanAmount, annualInterestRate, loanTermMonths);
-
-    //     // Print the breakdown
-    //     for (AmortizingRepaymentBreakdown repayment : breakdown) {
-    //         System.out.println("Payment Date: " + repayment.getPaymentDate() + ", Repayment Amount: $" + repayment.getRepaymentAmount()
-    //                 + ", Principal Amount: $" + repayment.getPrincipalAmount() + ", Interest Amount: $" + repayment.getInterestAmount());
-    //     }
-    // }
 
     public List<AmortizingRepaymentBreakdown> calculateAmortizingLoanRepayment(double loanAmount, double annualInterestRate, int loanTermMonths) {
         List<AmortizingRepaymentBreakdown> breakdown = new ArrayList<>();

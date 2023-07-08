@@ -1280,7 +1280,8 @@ Welcome to the documentation for our REST API. This API provides access to vario
             ```json
             {
                 "loanId": "b7aaccea-5762-4089-b700-e0da7676458b",
-	            "amount": "10000"
+	            "amount": "10000",
+                "other": ""
             }
             ```
         - Response:

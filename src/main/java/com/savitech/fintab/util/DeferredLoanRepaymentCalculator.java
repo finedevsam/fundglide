@@ -7,24 +7,27 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class DeferredLoanRepaymentCalculator {
-    public static void main(String[] args) {
-        double loanAmount = 10000; // Example loan amount
-        double annualInterestRate = 5.0; // Example annual interest rate
-        int loanTermMonths = 12; // Loan term in months
-        int defermentMonths = 6; // Number of months for deferment
+    // public static void main(String[] args) {
+    //     double loanAmount = 10000; // Example loan amount
+    //     double annualInterestRate = 5.0; // Example annual interest rate
+    //     int loanTermMonths = 12; // Loan term in months
+    //     int defermentMonths = 6; // Number of months for deferment
 
-        List<RepaymentBreakdown> breakdown = calculateDeferredLoanRepayment(loanAmount, annualInterestRate, loanTermMonths, defermentMonths);
+    //     List<RepaymentBreakdown> breakdown = calculateDeferredLoanRepayment(loanAmount, annualInterestRate, loanTermMonths, defermentMonths);
 
-        // Print the breakdown
-        for (RepaymentBreakdown repayment : breakdown) {
-            System.out.println("Payment Date: " + repayment.getPaymentDate() + ", Repayment Amount: $" + repayment.getRepaymentAmount()
-                    + ", Principal Amount: $" + repayment.getPrincipalAmount() + ", Interest Amount: $" + repayment.getInterestAmount());
-        }
-    }
+    //     // Print the breakdown
+    //     for (RepaymentBreakdown repayment : breakdown) {
+    //         System.out.println("Payment Date: " + repayment.getPaymentDate() + ", Repayment Amount: $" + repayment.getRepaymentAmount()
+    //                 + ", Principal Amount: $" + repayment.getPrincipalAmount() + ", Interest Amount: $" + repayment.getInterestAmount());
+    //     }
+    // }
 
-    public static List<RepaymentBreakdown> calculateDeferredLoanRepayment(double loanAmount, double annualInterestRate, int loanTermMonths, int defermentMonths) {
-        List<RepaymentBreakdown> breakdown = new ArrayList<>();
+    public List<DefferedLoanBreakDown> calculateDeferredLoanRepayment(double loanAmount, double annualInterestRate, int loanTermMonths, int defermentMonths) {
+        List<DefferedLoanBreakDown> breakdown = new ArrayList<>();
         BigDecimal monthlyInterestRate = BigDecimal.valueOf(annualInterestRate).divide(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);
         BigDecimal monthlyPayment = BigDecimal.valueOf(0);
         BigDecimal remainingBalance = BigDecimal.valueOf(loanAmount);
@@ -36,41 +39,14 @@ public class DeferredLoanRepaymentCalculator {
             BigDecimal interestAmount = remainingBalance.multiply(monthlyInterestRate).setScale(2, RoundingMode.HALF_UP);
             BigDecimal principalAmount = (i > defermentMonths) ? monthlyPayment.subtract(interestAmount).setScale(2, RoundingMode.HALF_UP) : BigDecimal.valueOf(0);
             remainingBalance = remainingBalance.subtract(principalAmount).setScale(2, RoundingMode.HALF_UP);
-            RepaymentBreakdown repayment = new RepaymentBreakdown(formattedDate, monthlyPayment.doubleValue(), principalAmount.doubleValue(), interestAmount.doubleValue());
+            DefferedLoanBreakDown repayment = new DefferedLoanBreakDown();
+            repayment.setInterestAmount(interestAmount.doubleValue());
+            repayment.setPaymentDate(formattedDate);
+            repayment.setRepaymentAmount(monthlyPayment.doubleValue());
+            repayment.setPrincipalAmount(principalAmount.doubleValue());
             breakdown.add(repayment);
         }
 
         return breakdown;
     }
 }
-
-class RepaymentBreakdown {
-    private String paymentDate;
-    private double repaymentAmount;
-    private double principalAmount;
-    private double interestAmount;
-
-    public RepaymentBreakdown(String paymentDate, double repaymentAmount, double principalAmount, double interestAmount) {
-        this.paymentDate = paymentDate;
-        this.repaymentAmount = repaymentAmount;
-        this.principalAmount = principalAmount;
-        this.interestAmount = interestAmount;
-    }
-
-    public String getPaymentDate() {
-        return paymentDate;
-    }
-
-    public double getRepaymentAmount() {
-        return repaymentAmount;
-    }
-
-    public double getPrincipalAmount() {
-        return principalAmount;
-    }
-
-    public double getInterestAmount() {
-        return interestAmount;
-    }
-}
-

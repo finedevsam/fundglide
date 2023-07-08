@@ -48,6 +48,9 @@ public class CustomerLoan {
     @Column(name = "loan_amount")
     private String loanAmount;
 
+    @Column(name = "other", nullable = true)
+    private String other;
+
     @Column(name = "is_approved")
     private boolean isApproved = Boolean.FALSE;
 

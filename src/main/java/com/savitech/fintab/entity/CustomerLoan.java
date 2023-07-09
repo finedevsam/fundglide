@@ -54,6 +54,13 @@ public class CustomerLoan {
     @Column(name = "is_approved")
     private boolean isApproved = Boolean.FALSE;
 
+    @Column(name = "disbursed")
+    private boolean disbursed = Boolean.FALSE;
+
+    @Column(name = "source_account", nullable = true)
+    @JsonIgnore
+    private String sourceAccount;
+
     @Column(name = "approved_by")
     private String approvedBy;
 

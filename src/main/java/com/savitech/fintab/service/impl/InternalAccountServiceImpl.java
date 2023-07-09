@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -82,6 +83,30 @@ public class InternalAccountServiceImpl implements InternalAccountService {
         internalAccount.setAccountNo(generateAccountNumber.internalAccountNumber(10));
         internalAccountRepository.save(internalAccount);
         return response.successResponse("Internal account created successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> allInternalAccount(Pageable pageable) {
+        User user = authenticatedUser.auth();
+        if(!user.getIsAdmin()){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+        AdminUser adminUser = adminUserRepository.findByUserId(user.getId());
+
+        if(adminUser.getPermission().size() < 1){
+            return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+        }
+
+        List<String> createPermissionlist = Arrays.asList("all");
+        
+        List<String> myPermission = adminUser.getPermission();
+        for(String id: myPermission){
+            if(!createPermissionlist.contains(helper.getRole(id))){
+                return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        return ResponseEntity.ok().body(internalAccountRepository.findAll(pageable).toList());
     }
     
 }

@@ -88,4 +88,9 @@ public class AccountController {
     public ResponseEntity<?> createInternalAccount(@RequestBody InternalAccountModel internalAccountModel){
         return internalAccountServiceImpl.createInternalAccount(internalAccountModel);
     }
+    
+    @GetMapping("/internal")
+    public ResponseEntity<?> allInternalAccounts(Pageable pageable){
+        return internalAccountServiceImpl.allInternalAccount(pageable);
+    }
 }

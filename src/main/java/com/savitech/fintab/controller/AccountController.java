@@ -2,12 +2,15 @@ package com.savitech.fintab.controller;
 
 import com.savitech.fintab.entity.TransactionLogs;
 import com.savitech.fintab.entity.impl.BulkPayment;
+import com.savitech.fintab.entity.impl.InternalAccountModel;
 import com.savitech.fintab.entity.impl.PayWithChannelModel;
 import com.savitech.fintab.entity.impl.SetPin;
 import com.savitech.fintab.entity.impl.Transfer;
 import com.savitech.fintab.service.impl.AccountServiceImpl;
 import com.savitech.fintab.service.impl.BulkPaymentServiceImpl;
 import com.savitech.fintab.service.impl.CredentialServiceImpl;
+import com.savitech.fintab.service.impl.InternalAccountServiceImpl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,9 @@ public class AccountController {
 
     @Autowired
     private BulkPaymentServiceImpl bulkPaymentService;
+
+    @Autowired
+    private InternalAccountServiceImpl internalAccountServiceImpl;
 
     @GetMapping()
     public ResponseEntity<?> account(){
@@ -74,5 +80,12 @@ public class AccountController {
     @GetMapping("logs")
     public List<TransactionLogs> myTransactionLogs(Pageable pageable){
         return accountService.myTransactionLogs(pageable).toList();
+    }
+
+    // Internal Account manager
+    
+    @PostMapping("/internal")
+    public ResponseEntity<?> createInternalAccount(@RequestBody InternalAccountModel internalAccountModel){
+        return internalAccountServiceImpl.createInternalAccount(internalAccountModel);
     }
 }

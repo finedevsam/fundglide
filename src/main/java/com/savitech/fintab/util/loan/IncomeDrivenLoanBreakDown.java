@@ -1,9 +1,9 @@
-package com.savitech.fintab.util;
+package com.savitech.fintab.util.loan;
 
 import lombok.Data;
 
 @Data
-public class AmortizingRepaymentBreakdown {
+public class IncomeDrivenLoanBreakDown {
     private String paymentDate;
     private double repaymentAmount;
     private double principalAmount;

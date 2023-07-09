@@ -30,7 +30,7 @@ public class InternalAccount {
      @Column(name = "account_no")
     private String accountNo;
 
-    private double bal;
+    private double bal = 0.0;
 
      @Column(name = "account_code")
     private String accountCode;

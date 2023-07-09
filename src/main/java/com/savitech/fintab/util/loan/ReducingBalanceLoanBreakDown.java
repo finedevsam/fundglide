@@ -1,4 +1,4 @@
-package com.savitech.fintab.util;
+package com.savitech.fintab.util.loan;
 
 import java.math.BigDecimal;
 

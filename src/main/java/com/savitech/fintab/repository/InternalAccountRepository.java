@@ -13,6 +13,8 @@ public interface InternalAccountRepository extends JpaRepository<InternalAccount
 
     InternalAccount findInternalAccountById(String id);
 
+    InternalAccount findInternalAccountByAccountNo(String accountNo);
+
     boolean existsByAccountCode(String accountCode);
 
 }

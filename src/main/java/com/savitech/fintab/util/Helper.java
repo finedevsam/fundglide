@@ -7,11 +7,16 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
+import com.savitech.fintab.entity.CustomerLoan;
+import com.savitech.fintab.entity.InternalAccount;
+import com.savitech.fintab.entity.LoanConfig;
 import com.savitech.fintab.entity.Permission;
 import com.savitech.fintab.entity.TransactionLogs;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
+import com.savitech.fintab.repository.InternalAccountRepository;
+import com.savitech.fintab.repository.LoanConfigRepository;
 import com.savitech.fintab.repository.PermissionRepository;
 import com.savitech.fintab.repository.TransactionLogsRepository;
 import com.savitech.fintab.repository.UserRepository;
@@ -67,6 +72,13 @@ public class Helper {
 
     @Autowired
     private PermissionRepository permissionRepository;
+
+    @Autowired
+    private LoanConfigRepository loanConfigRepository;
+
+
+    @Autowired
+    private InternalAccountRepository internalAccountRepository;
 
 
     public double calculateSumOfExcel(Sheet sheet){
@@ -170,42 +182,63 @@ public class Helper {
     public void createTransactionLog(String source, String sourceBank, String destination, String destinationBank, String amount, String description){
         TransactionLogs logs = new TransactionLogs();
         String reference = generator.generateReference(16);
+
+        String newDescription = null;
         String desc = buildDescription(source, sourceBank, destination, destinationBank, description);
+        if(!Objects.equals(desc, null)){
+            newDescription = desc;
+        }else{
+            newDescription = description;
+        }
+
         logs.setReference(reference);
         logs.setSource(source);
         logs.setDestination(destination);
         logs.setAmount(amount);
         logs.setSourceBank(sourceBank);
         logs.setDestinationBank(destinationBank);
-        logs.setDescription(desc);
+        logs.setDescription(newDescription);
         transactionLogsRepository.save(logs);
-
         String amt = StringUtils.capitalize(amountToWords.convertToWords(Double.parseDouble(amount)));
         System.out.println(amt);
         // Send Email notification to destination
-        sendMail(destination, reference, amount, desc, "CR");
+        sendMail(destination, reference, amount, newDescription, "CR");
 
         // Send Email notification to source
-        sendMail(source, reference, amount, desc, "DR");
+        if(!Objects.equals(desc, null)){
+            sendMail(source, reference, amount, newDescription, "DR");
+        }
     }
 
     private String buildDescription(String sourceAccount, String sourceBank, String destinationAccount, String destinationBank, String description){
         String response = null;
         if(Objects.equals(sourceBank, bank_code) && Objects.equals(sourceBank, destinationBank)){
-            Account sourceAcct = getAccount(sourceAccount);
-            Account destAcct = getAccount(destinationAccount);
+            try {
+                Account sourceAcct = getAccount(sourceAccount);
+                Account destAcct = getAccount(destinationAccount);
 
-            Optional<Customer> sourceCustomer = getCustomer(sourceAcct.getCustomer().getId());
-            Optional<Customer> destCustomer = getCustomer(destAcct.getCustomer().getId());
+                Optional<Customer> sourceCustomer = getCustomer(sourceAcct.getCustomer().getId());
+                Optional<Customer> destCustomer = getCustomer(destAcct.getCustomer().getId());
 
-            response = String.format("%s|%s|%s", sourceCustomer.get().getLastName().toUpperCase(), description, destCustomer.get().getLastName().toUpperCase());
+                response = String.format("%s|%s|%s", sourceCustomer.get().getLastName().toUpperCase(), description, destCustomer.get().getLastName().toUpperCase());
+                
+            } catch (Exception e) {
+                response = null;
+            }
+            
         }
 
         if(! Objects.equals(sourceBank, bank_code) && Objects.equals(destinationBank, bank_code)){
-            Account destAcct = getAccount(destinationAccount);
-            Optional<Customer> destCustomer = getCustomer(destAcct.getCustomer().getId());
+            try {
+                Account destAcct = getAccount(destinationAccount);
+                Optional<Customer> destCustomer = getCustomer(destAcct.getCustomer().getId());
 
-            response = String.format("%s|%s", description, destCustomer.get().getLastName().toUpperCase());
+                response = String.format("%s|%s", description, destCustomer.get().getLastName().toUpperCase());
+                
+            } catch (Exception e) {
+                response = null;
+            }
+            
         }
         return response;
     }
@@ -216,6 +249,10 @@ public class Helper {
 
     private Account getAccount(String accountNo){
         return accountRepository.findAccountByAccountNo(accountNo);
+    }
+
+    private InternalAccount getInternalAccount(String accountNo){
+        return internalAccountRepository.findInternalAccountByAccountNo(accountNo);
     }
 
     private void sendMail(String accountNo, String reference, String amount, String desc, String type){
@@ -284,5 +321,32 @@ public class Helper {
     public String getRole(String Id){
         Permission permission = permissionRepository.findPermissionById(Id);
         return permission.getRole();
+    }
+
+    // Process Loan Disbursemment
+    public Pair<Boolean, String> disburseLoan(CustomerLoan customerLoan){
+        LoanConfig config = loanConfigRepository.findLoanConfigByType("disburse");
+        if(Objects.equals(config, null)){
+            return Pair.of(false, "Disbursement account has not been set");
+        }
+
+        Customer customer = customerRepository.findCustomerById(customerLoan.getCustomer().getId());
+        User user = userRepository.findUserById(customer.getUser().getId());
+        Account account = accountRepository.findAccountByCustomerId(customer.getId());
+        InternalAccount internalAccount = internalAccountRepository.findInternalAccountById(config.getSourceId());
+
+        // Process and credit customer
+        double newCustomerBal = Double.parseDouble(customerLoan.getLoanAmount()) + Double.parseDouble(account.getBalance());
+        account.setBalance(String.valueOf(newCustomerBal));
+        accountRepository.save(account);
+
+        // Debit internal account
+        double newInternalBal = internalAccount.getBal() - Double.parseDouble(customerLoan.getLoanAmount());
+        internalAccount.setBal(newInternalBal);
+        internalAccountRepository.save(internalAccount);
+
+        // Create Customer Transaction Logs
+        createTransactionLog(internalAccount.getAccountNo(), bank_code, account.getAccountNo(), bank_code, customerLoan.getLoanAmount(), "LOAN DISBURSMENT");
+        return Pair.of(true, "Disbursed successful");
     }
 }

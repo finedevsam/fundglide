@@ -4,7 +4,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import com.savitech.fintab.dto.ApplyForLoanDto;
-import com.savitech.fintab.dto.ApproveLoanDto;
 import com.savitech.fintab.dto.LoanConfigDto;
 import com.savitech.fintab.dto.LoanTypeDto;
 
@@ -25,7 +24,7 @@ public interface LoanService {
 
     ResponseEntity<?> adminViewLoanBreakdown(String loanId);
 
-    ResponseEntity<?> approveLoan(String loanId, ApproveLoanDto approveLoanDto);
+    ResponseEntity<?> approveLoan(String loanId);
 
     ResponseEntity<?> configureLoan(LoanConfigDto loanConfigDto);
 

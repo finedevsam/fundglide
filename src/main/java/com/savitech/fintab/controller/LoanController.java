@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.savitech.fintab.dto.ApplyForLoanDto;
-import com.savitech.fintab.dto.LoanConfigDto;
 import com.savitech.fintab.dto.LoanTypeDto;
 import com.savitech.fintab.impl.LoanServiceImpl;
 
@@ -63,4 +62,8 @@ public class LoanController {
         return loanServiceImpl.adminViewLoanBreakdown(loanId);
     }
     
+    @GetMapping("/admin/approve/{loanId}")
+    public ResponseEntity<?> approveLoan(@PathVariable String loanId){
+        return loanServiceImpl.approveLoan(loanId);
+    }
 }

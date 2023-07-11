@@ -1,6 +1,5 @@
 package com.savitech.fintab.impl;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,12 +9,12 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.savitech.fintab.dto.ApplyForLoanDto;
-import com.savitech.fintab.dto.ApproveLoanDto;
 import com.savitech.fintab.dto.LoanConfigDto;
 import com.savitech.fintab.dto.LoanTypeDto;
 import com.savitech.fintab.entity.AdminUser;
@@ -483,7 +482,7 @@ public class LoanServiceImpl implements LoanService{
     }
 
     @Override
-    public ResponseEntity<?> approveLoan(String loanId, ApproveLoanDto approveLoanDto) {
+    public ResponseEntity<?> approveLoan(String loanId) {
         User user = authenticatedUser.auth();
         if(!user.getIsAdmin()){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
@@ -512,10 +511,16 @@ public class LoanServiceImpl implements LoanService{
             return response.failResponse("Loan application has already been approved", HttpStatus.BAD_REQUEST);
         }
 
-        customerLoan.setApproved(true);
-        customerLoan.setApprovedBy(String.format("%s %s", adminUser.getLastName().toUpperCase(), adminUser.getFirstName().toUpperCase()));
-        customerLoanRepository.save(customerLoan);
-        return response.successResponse("loan approved successfully", HttpStatus.OK);
+        Pair<Boolean, String> processLoan = helper.disburseLoan(customerLoan);
+        if(!processLoan.getFirst()){
+            return response.failResponse(processLoan.getSecond(), HttpStatus.BAD_REQUEST);
+        }else {
+            customerLoan.setApproved(true);
+            customerLoan.setApprovedBy(String.format("%s %s", adminUser.getLastName().toUpperCase(), adminUser.getFirstName().toUpperCase()));
+            customerLoan.setDisbursed(true);
+            customerLoanRepository.save(customerLoan);
+            return response.successResponse(processLoan.getSecond(), HttpStatus.OK);
+        }
     }
 
     @Override

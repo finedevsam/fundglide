@@ -1,15 +1,15 @@
 package com.savitech.fintab.controller;
 
+import com.savitech.fintab.dto.BulkPaymentDto;
+import com.savitech.fintab.dto.InternalAccountDto;
+import com.savitech.fintab.dto.PayWithChannelDto;
+import com.savitech.fintab.dto.SetPinDto;
+import com.savitech.fintab.dto.TransferDto;
 import com.savitech.fintab.entity.TransactionLogs;
-import com.savitech.fintab.entity.impl.BulkPayment;
-import com.savitech.fintab.entity.impl.InternalAccountModel;
-import com.savitech.fintab.entity.impl.PayWithChannelModel;
-import com.savitech.fintab.entity.impl.SetPin;
-import com.savitech.fintab.entity.impl.Transfer;
-import com.savitech.fintab.service.impl.AccountServiceImpl;
-import com.savitech.fintab.service.impl.BulkPaymentServiceImpl;
-import com.savitech.fintab.service.impl.CredentialServiceImpl;
-import com.savitech.fintab.service.impl.InternalAccountServiceImpl;
+import com.savitech.fintab.impl.AccountServiceImpl;
+import com.savitech.fintab.impl.BulkPaymentServiceImpl;
+import com.savitech.fintab.impl.CredentialServiceImpl;
+import com.savitech.fintab.impl.InternalAccountServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -47,23 +47,23 @@ public class AccountController {
     }
 
     @PostMapping("/set-pin")
-    public ResponseEntity<?> setPin(@RequestBody SetPin setPin){
+    public ResponseEntity<?> setPin(@RequestBody SetPinDto setPin){
         return credentialService.setTransactionPin(setPin);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<?> fundTransfer(@RequestBody Transfer ft){
+    public ResponseEntity<?> fundTransfer(@RequestBody TransferDto ft){
         return accountService.transfer(ft);
     }
 
 
     @PostMapping("/channel/validate")
-    public ResponseEntity<?> verifyPayWithChannel(@RequestBody PayWithChannelModel channelModel){
+    public ResponseEntity<?> verifyPayWithChannel(@RequestBody PayWithChannelDto channelModel){
         return accountService.verifyPayWithChannel(channelModel);
     }
 
     @PostMapping("/payment/bulk")
-    public ResponseEntity<?> bulkTransfer(BulkPayment bulk){
+    public ResponseEntity<?> bulkTransfer(BulkPaymentDto bulk){
         return bulkPaymentService.bulkPayment(bulk);
     }
 
@@ -85,7 +85,7 @@ public class AccountController {
     // Internal Account manager
     
     @PostMapping("/internal")
-    public ResponseEntity<?> createInternalAccount(@RequestBody InternalAccountModel internalAccountModel){
+    public ResponseEntity<?> createInternalAccount(@RequestBody InternalAccountDto internalAccountModel){
         return internalAccountServiceImpl.createInternalAccount(internalAccountModel);
     }
     

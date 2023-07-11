@@ -1,9 +1,10 @@
 package com.savitech.fintab.service;
 
-import com.savitech.fintab.entity.impl.CustomerReg;
 import org.springframework.http.ResponseEntity;
+
+import com.savitech.fintab.dto.CustomerRegDto;
 
 public interface RegisterService {
 
-    ResponseEntity<?> register(CustomerReg reg);
+    ResponseEntity<?> register(CustomerRegDto reg);
 }

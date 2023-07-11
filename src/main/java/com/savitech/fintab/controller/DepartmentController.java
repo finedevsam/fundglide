@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.savitech.fintab.entity.impl.CreateDepartmentModel;
-import com.savitech.fintab.service.impl.DepartmentSeviceImpl;
+import com.savitech.fintab.dto.CreateDepartmentDto;
+import com.savitech.fintab.impl.DepartmentSeviceImpl;
 
 @RestController
 @RequestMapping("admin/department")
@@ -25,7 +25,7 @@ public class DepartmentController {
     private DepartmentSeviceImpl departmentSeviceImpl;
 
     @PostMapping()
-    public ResponseEntity<?> createDepartment(@RequestBody CreateDepartmentModel departmentModel){
+    public ResponseEntity<?> createDepartment(@RequestBody CreateDepartmentDto departmentModel){
         return departmentSeviceImpl.createDepartment(departmentModel);
     }
 
@@ -35,7 +35,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/{Id}")
-    public ResponseEntity<?> updateDepartment(@PathVariable String Id, @RequestBody CreateDepartmentModel departmentModel){
+    public ResponseEntity<?> updateDepartment(@PathVariable String Id, @RequestBody CreateDepartmentDto departmentModel){
         return departmentSeviceImpl.updateDepartment(Id, departmentModel);
     }
 

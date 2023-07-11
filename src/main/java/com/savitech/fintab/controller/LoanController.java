@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.savitech.fintab.entity.impl.ApplyForLoan;
-import com.savitech.fintab.entity.impl.LoanTypeModel;
-import com.savitech.fintab.service.impl.LoanServiceImpl;
+import com.savitech.fintab.dto.ApplyForLoanDto;
+import com.savitech.fintab.dto.LoanConfigDto;
+import com.savitech.fintab.dto.LoanTypeDto;
+import com.savitech.fintab.impl.LoanServiceImpl;
 
 @RestController
 @RequestMapping("loan")
@@ -23,7 +24,7 @@ public class LoanController {
     private LoanServiceImpl loanServiceImpl;
 
     @PostMapping()
-    public ResponseEntity<?> createLoanType(@RequestBody LoanTypeModel loanTypeModel){
+    public ResponseEntity<?> createLoanType(@RequestBody LoanTypeDto loanTypeModel){
         return loanServiceImpl.createLoanType(loanTypeModel);
     }
 
@@ -33,12 +34,12 @@ public class LoanController {
     }
 
     @PutMapping("/{Id}")
-    public ResponseEntity<?> updateLoanType(@PathVariable String Id, @RequestBody LoanTypeModel loanTypeModel){
+    public ResponseEntity<?> updateLoanType(@PathVariable String Id, @RequestBody LoanTypeDto loanTypeModel){
         return loanServiceImpl.updateLoanType(Id, loanTypeModel);
     }
 
     @PostMapping("/apply")
-    public ResponseEntity<?> customerApplyForLoan(@RequestBody ApplyForLoan loan){
+    public ResponseEntity<?> customerApplyForLoan(@RequestBody ApplyForLoanDto loan){
         return loanServiceImpl.applyForLoan(loan);
     }
 

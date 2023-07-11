@@ -1,10 +1,11 @@
 package com.savitech.fintab.service;
 
 
-import com.savitech.fintab.entity.impl.SetPin;
 import org.springframework.http.ResponseEntity;
+
+import com.savitech.fintab.dto.SetPinDto;
 
 public interface CredentialService {
 
-    ResponseEntity<?> setTransactionPin(SetPin pin);
+    ResponseEntity<?> setTransactionPin(SetPinDto pin);
 }

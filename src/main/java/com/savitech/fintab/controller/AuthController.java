@@ -1,10 +1,11 @@
 package com.savitech.fintab.controller;
 
-import com.savitech.fintab.entity.impl.*;
-import com.savitech.fintab.service.impl.AdminLoginServiceImpl;
-import com.savitech.fintab.service.impl.LoginServiceImpl;
-import com.savitech.fintab.service.impl.ProfileServiceImpl;
-import com.savitech.fintab.service.impl.RegisterServiceImpl;
+import com.savitech.fintab.dto.*;
+import com.savitech.fintab.impl.AdminLoginServiceImpl;
+import com.savitech.fintab.impl.LoginServiceImpl;
+import com.savitech.fintab.impl.ProfileServiceImpl;
+import com.savitech.fintab.impl.RegisterServiceImpl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,18 +28,18 @@ public class AuthController {
 
 
     @PostMapping("register")
-    public ResponseEntity<?> register(@RequestBody CustomerReg reg){
+    public ResponseEntity<?> register(@RequestBody CustomerRegDto reg){
         return registerService.register(reg);
     }
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody Login login){
+    public ResponseEntity<?> login(@RequestBody LoginDto login){
         return loginService.signIn(login);
     }
 
 
     @PostMapping("admin/login")
-    public ResponseEntity<?> adminLogin(@RequestBody AdminLoginModel adminLoginModel){
+    public ResponseEntity<?> adminLogin(@RequestBody AdminLoginDto adminLoginModel){
         return adminLoginServiceImpl.login(adminLoginModel);
     }
 
@@ -49,7 +50,7 @@ public class AuthController {
     }
 
     @PutMapping("profile")
-    public ResponseEntity<?> updateProfile(UpdateProfile profile){
+    public ResponseEntity<?> updateProfile(UpdateProfileDto profile){
         return profileService.updateProfile(profile);
     }
 
@@ -59,7 +60,7 @@ public class AuthController {
     }
 
     @PostMapping("reset/password")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPassword resetPassword){
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDto resetPassword){
         return loginService.resetPassword(resetPassword);
     }
 
@@ -69,7 +70,7 @@ public class AuthController {
     }
 
     @PostMapping("change_password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePassword changePassword){
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto changePassword){
         return profileService.changePassword(changePassword);
     }
 

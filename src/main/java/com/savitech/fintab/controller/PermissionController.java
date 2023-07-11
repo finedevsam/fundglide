@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.savitech.fintab.entity.impl.PermissionModel;
-import com.savitech.fintab.entity.impl.PermissionUpdateModel;
-import com.savitech.fintab.service.impl.PermissionManagerServiceImpl;
+import com.savitech.fintab.dto.PermissionDto;
+import com.savitech.fintab.dto.PermissionUpdateDto;
+import com.savitech.fintab.impl.PermissionManagerServiceImpl;
 
 
 @RestController
@@ -24,7 +24,7 @@ public class PermissionController {
     private PermissionManagerServiceImpl permissionManagerServiceImpl;
 
     @PostMapping()
-    public ResponseEntity<?> createNewRole(@RequestBody PermissionModel permissionModel){
+    public ResponseEntity<?> createNewRole(@RequestBody PermissionDto permissionModel){
         return permissionManagerServiceImpl.createRole(permissionModel);
     }
 
@@ -34,7 +34,7 @@ public class PermissionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePermission(@PathVariable String id, @RequestBody PermissionUpdateModel permissionUpdateModel){
+    public ResponseEntity<?> updatePermission(@PathVariable String id, @RequestBody PermissionUpdateDto permissionUpdateModel){
         return permissionManagerServiceImpl.updatePermistion(id, permissionUpdateModel);
     }
 

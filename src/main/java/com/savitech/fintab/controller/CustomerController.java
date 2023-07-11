@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.savitech.fintab.service.impl.CustomerManagerServiceImpl;
+import com.savitech.fintab.impl.CustomerManagerServiceImpl;
 
 @RestController
 @RequestMapping("admin/customer")

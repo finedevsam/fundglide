@@ -1,16 +1,17 @@
 package com.savitech.fintab.service;
 
-import com.savitech.fintab.entity.impl.ChangePassword;
-import com.savitech.fintab.entity.impl.UpdateProfile;
 import org.springframework.http.ResponseEntity;
+
+import com.savitech.fintab.dto.ChangePasswordDto;
+import com.savitech.fintab.dto.UpdateProfileDto;
 
 public interface ProfileService {
 
-    ResponseEntity<?> updateProfile(UpdateProfile profile);
+    ResponseEntity<?> updateProfile(UpdateProfileDto profile);
 
     ResponseEntity<?> loggedInUser();
 
-    ResponseEntity<?> changePassword(ChangePassword changePassword);
+    ResponseEntity<?> changePassword(ChangePasswordDto changePassword);
 
     ResponseEntity<?> activateQRCodePayment();
 }

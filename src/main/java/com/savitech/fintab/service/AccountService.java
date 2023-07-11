@@ -1,8 +1,9 @@
 package com.savitech.fintab.service;
 
+import com.savitech.fintab.dto.PayWithChannelDto;
+import com.savitech.fintab.dto.TransferDto;
 import com.savitech.fintab.entity.TransactionLogs;
-import com.savitech.fintab.entity.impl.PayWithChannelModel;
-import com.savitech.fintab.entity.impl.Transfer;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,9 @@ public interface AccountService {
 
     ResponseEntity<?> accountLookUp(String accountNo);
 
-    ResponseEntity<?> transfer(Transfer ft);
+    ResponseEntity<?> transfer(TransferDto ft);
 
     Page<TransactionLogs> myTransactionLogs(Pageable pageable);
 
-    ResponseEntity<?> verifyPayWithChannel(PayWithChannelModel channelModel);
+    ResponseEntity<?> verifyPayWithChannel(PayWithChannelDto channelModel);
 }

@@ -3,17 +3,19 @@ package com.savitech.fintab.service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import com.savitech.fintab.entity.impl.ApplyForLoan;
-import com.savitech.fintab.entity.impl.LoanTypeModel;
+import com.savitech.fintab.dto.ApplyForLoanDto;
+import com.savitech.fintab.dto.ApproveLoanDto;
+import com.savitech.fintab.dto.LoanConfigDto;
+import com.savitech.fintab.dto.LoanTypeDto;
 
 public interface LoanService {
-    ResponseEntity<?> createLoanType(LoanTypeModel loanTypeModel);
+    ResponseEntity<?> createLoanType(LoanTypeDto loanTypeModel);
 
     ResponseEntity<?> allLoan(Pageable pageable);
 
-    ResponseEntity<?> updateLoanType(String Id, LoanTypeModel loanTypeModel);
+    ResponseEntity<?> updateLoanType(String Id, LoanTypeDto loanTypeModel);
 
-    ResponseEntity<?> applyForLoan(ApplyForLoan loan);
+    ResponseEntity<?> applyForLoan(ApplyForLoanDto loan);
 
     ResponseEntity<?> myLoans(Pageable pageable);
 
@@ -23,5 +25,9 @@ public interface LoanService {
 
     ResponseEntity<?> adminViewLoanBreakdown(String loanId);
 
-    ResponseEntity<?> approveLoan(String loanId);
+    ResponseEntity<?> approveLoan(String loanId, ApproveLoanDto approveLoanDto);
+
+    ResponseEntity<?> configureLoan(LoanConfigDto loanConfigDto);
+
+    ResponseEntity<?> loanConfiguration();
 }

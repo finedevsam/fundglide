@@ -1,14 +1,15 @@
 package com.savitech.fintab.service;
 
-import com.savitech.fintab.entity.impl.Login;
-import com.savitech.fintab.entity.impl.ResetPassword;
-import com.savitech.fintab.entity.impl.ResetPasswordConfirm;
 import org.springframework.http.ResponseEntity;
 
-public interface LoginService {
-    ResponseEntity<?> signIn(Login login);
+import com.savitech.fintab.dto.LoginDto;
+import com.savitech.fintab.dto.ResetPasswordDto;
+import com.savitech.fintab.dto.ResetPasswordConfirm;
 
-    ResponseEntity<?> resetPassword(ResetPassword password);
+public interface LoginService {
+    ResponseEntity<?> signIn(LoginDto login);
+
+    ResponseEntity<?> resetPassword(ResetPasswordDto password);
 
     ResponseEntity<?> confirmPasswordReset(ResetPasswordConfirm passwordConfirm);
 

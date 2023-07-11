@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import java.awt.image.BufferedImage;
 import java.awt.Color;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -251,10 +252,6 @@ public class Helper {
         return accountRepository.findAccountByAccountNo(accountNo);
     }
 
-    private InternalAccount getInternalAccount(String accountNo){
-        return internalAccountRepository.findInternalAccountByAccountNo(accountNo);
-    }
-
     private void sendMail(String accountNo, String reference, String amount, String desc, String type){
         try {
             Account account = accountRepository.findAccountByAccountNo(accountNo);
@@ -337,7 +334,9 @@ public class Helper {
 
         // Process and credit customer
         double newCustomerBal = Double.parseDouble(customerLoan.getLoanAmount()) + Double.parseDouble(account.getBalance());
-        account.setBalance(String.valueOf(newCustomerBal));
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        String formattedValue = decimalFormat.format(newCustomerBal);
+        account.setBalance(formattedValue);
         accountRepository.save(account);
 
         // Debit internal account

@@ -1,5 +1,6 @@
 package com.savitech.fintab.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,5 +11,7 @@ public interface CustomerLoanBreakDownRepository extends JpaRepository <Customer
 
     List<CustomerLoanBreakDown> findAllCustomerLoanBreakDownsByCustomerLoanIdAndCustomerId(String loanId, String customerId);
     List<CustomerLoanBreakDown> findAllCustomerLoanBreakDownsByCustomerLoanId(String Id);
+
+    List<CustomerLoanBreakDown> findAllCustomerLoanBreakDownByPaidAndDueDate(boolean paid, Date dueDate);
     
 }

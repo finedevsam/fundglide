@@ -9,6 +9,7 @@ import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.CustomerLoan;
 import com.savitech.fintab.entity.InternalAccount;
+import com.savitech.fintab.entity.InternalLogs;
 import com.savitech.fintab.entity.LoanConfig;
 import com.savitech.fintab.entity.Permission;
 import com.savitech.fintab.entity.TransactionLogs;
@@ -16,6 +17,7 @@ import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.InternalAccountRepository;
+import com.savitech.fintab.repository.InternalLogsRepository;
 import com.savitech.fintab.repository.LoanConfigRepository;
 import com.savitech.fintab.repository.PermissionRepository;
 import com.savitech.fintab.repository.TransactionLogsRepository;
@@ -80,6 +82,9 @@ public class Helper {
 
     @Autowired
     private InternalAccountRepository internalAccountRepository;
+
+    @Autowired
+    private InternalLogsRepository internalLogsRepository;
 
 
     public double calculateSumOfExcel(Sheet sheet){
@@ -209,6 +214,18 @@ public class Helper {
         if(!Objects.equals(desc, null)){
             sendMail(source, reference, amount, newDescription, "DR");
         }
+    }
+
+    public void createInternalLogs(String source, String destination, double amount, String description, String loanReference){
+        InternalLogs logs = new InternalLogs();
+        String reference = generator.generateReference(16);
+        logs.setAmount(amount);
+        logs.setDescription(description);
+        logs.setReference(reference);
+        logs.setSource(source);
+        logs.setDestination(destination);
+        logs.setLoanReference(loanReference);
+        internalLogsRepository.save(logs);
     }
 
     private String buildDescription(String sourceAccount, String sourceBank, String destinationAccount, String destinationBank, String description){

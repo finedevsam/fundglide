@@ -105,7 +105,7 @@ public class ProccessLoanAutoRepayment {
             helper.createInternalLogs(account.getAccountNo(), internalAccountDisburse.getAccountNo(), calculate.getFirst(), "Initial Payment", customerLoan.getLoanReference());
 
             // Interest Payment
-            helper.createInternalLogs(account.getAccountNo(), internalAccountInterest.getAccountNo(), calculate.getSecond(), "Interes Payment", customerLoan.getLoanReference());
+            helper.createInternalLogs(account.getAccountNo(), internalAccountInterest.getAccountNo(), calculate.getSecond(), "Interest Payment", customerLoan.getLoanReference());
 
 
             // Close the Loan after completion of the Loan

@@ -2,6 +2,9 @@ package com.savitech.fintab.util;
 
 
 import com.savitech.fintab.config.EmailConfig;
+import com.savitech.fintab.entity.CurrencyConfig;
+import com.savitech.fintab.repository.CurrencyConfigRepository;
+
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,12 +12,16 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class EmailNotification {
 
     @Autowired
     private EmailConfig emailConfig;
+
+    @Autowired
+    private CurrencyConfigRepository currencyConfigRepository;
 
     public void registrationEmail(String customerName,
                                   String account_no,
@@ -42,7 +49,18 @@ public class EmailNotification {
             String email,
             String balance
             ) throws MessagingException {
+        
+        
 
+        String currency = null;
+
+        CurrencyConfig currencyConfig = currencyConfigRepository.findCurrencyConfigByIsDefault(true);
+
+        if(Objects.equals(currencyConfig, null)){
+            currency = "USD";
+        }else{
+            currency = currencyConfig.getCode();
+        }
         double amountValue = Double.parseDouble(amount);
         double balanceValue = Double.parseDouble(balance);
 
@@ -52,8 +70,8 @@ public class EmailNotification {
         properties.put("date", date);
         properties.put("type", type);
         properties.put("description", description);
-        properties.put("amount", String.format("%s %,.2f", "₦", amountValue));
-        properties.put("balance", String.format("%s %,.2f", "₦", balanceValue));
+        properties.put("amount", String.format("%s %,.2f", currency, amountValue));
+        properties.put("balance", String.format("%s %,.2f", currency, balanceValue));
 
         emailConfig.sendHtmlMessage(properties, email, "Transaction Receipt", "receipt.html");
     }

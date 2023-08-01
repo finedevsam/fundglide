@@ -29,6 +29,8 @@
         - [Validate Channel](#validate-channel)
         - [Transaction Logs](#transaction-logs)
         - [My Account](#my-accounts)
+        - [Admin Create Internal Account](#internal-account)
+        - [All Internal Account](#all-internal-account)
     - [Admin](#admin)
         - [Customer](#customer)
             - [All Customer](#all-customer)
@@ -58,6 +60,9 @@
             - [Customer Apply for Loan](#apply-for-loan)
             - [Customer Loan](#customer-loan)
             - [View Loan Breakdown](#loan-breakdown)
+            - [Admin All Loan](#admin-loan)
+            - [Admin View Loan Breakdown](#admin-view-loan-breakdown)
+            - [Approve Loan](#approve-loan)
 
 
 ### Introduction
@@ -1362,6 +1367,158 @@ Welcome to the documentation for our REST API. This API provides access to vario
                     "paymentAmount": 851.5,
                     "interest": 27.87,
                     "paid": false
+                }
+            ]
+        ```
+
+
+### Admin All Customer Loan
+
+- [GET /loan/admin/all](#admin-loan): Admin View Customer Loans.
+     - Request:
+        - Method: `GET`
+        - Path: `/loan/admin/all`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "a761b52d-c842-48c6-8113-b0411bf75396",
+                    "loanType": {
+                        "id": "b7aaccea-5762-4089-b700-e0da7676458b",
+                        "name": "Quick Loan Update",
+                        "code": "AMTZ",
+                        "tenure": "12",
+                        "rate": "4",
+                        "updatedAt": "2023-07-04T23:55:33.813+00:00",
+                        "createdAt": "2023-07-02T06:28:31.110+00:00"
+                    },
+                    "loanReference": "6I3T531F15",
+                    "loanAmount": "10000",
+                    "other": null,
+                    "disbursed": true,
+                    "approvedBy": "ADMINISTRATOR SYSTEM",
+                    "approved": true
+                }
+            ]
+### Admin View Loan Breakdown
+
+- [GET /loan/admin/breakdown/{loanId}](#admin-view-loan-breakdown): This allow the system admin/staff to view the breakdown for a particular loan
+     - Request:
+        - Method: `GET`
+        - Path: `/loan/admin/breakdown/{loanId}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "28a4486b-5226-471a-ad71-81928a24eb6a",
+                    "dueDate": "2023-08-07T23:00:00.000+00:00",
+                    "paymentAmount": 5851.5,
+                    "interest": 33.33,
+                    "paid": false
+                },
+                {
+                    "id": "7114a34d-5a1f-4a88-96f2-5cd7bc97cfe9",
+                    "dueDate": "2023-09-07T23:00:00.000+00:00",
+                    "paymentAmount": 5851.5,
+                    "interest": 13.94,
+                    "paid": false
+                },
+                {
+                    "id": "a8ea6205-1ec1-4b51-a4bc-48fd688a739b",
+                    "dueDate": "2023-10-07T23:00:00.000+00:00",
+                    "paymentAmount": 5851.5,
+                    "interest": -5.52,
+                    "paid": false
+                }
+            ]
+        ```
+
+### Approve Loan
+
+- [GET /loan/admin/approve/{loanId}](#approve-loan): This allow the system admin/staff to approve and disburse the loan to customer's account.
+     - Request:
+        - Method: `GET`
+        - Path: `/loan/admin/approve/{loanId}`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Disbursed successful",
+                "status": "successful"
+            }
+        ```
+
+
+# Internal Account
+
+This are the account we can create on the system to manage several income, track expenses and other internal financial management within the organisation.
+
+### Admin Create Internal Account
+
+- [POST /account/internal](#internal-account): Admin Create Internal Account
+     - Request:
+        - Method: `POST`
+        - Path: `/account/internal`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Body:
+            ```json
+                {
+                    "accountCode": "interest"
+                }
+            ```
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            {
+                "code": 200,
+                "message": "Internal account created successfully",
+                "status": "successful"
+            }
+        ```
+
+### All Internal Account
+
+- [GET /account/internal](#approve-loan): This endpoint List all the internal account within the system.
+     - Request:
+        - Method: `GET`
+        - Path: `/account/internal`
+        - Headers: 
+            - Authorization: `{{Bearer token}}`
+        
+        - Response:
+        - Status: `200 OK`
+        - Body:
+        ```json
+            [
+                {
+                    "id": "62adfaad-b82d-4d19-81a1-7656430b7efa",
+                    "accountNo": "6000000011",
+                    "bal": 0.0,
+                    "accountCode": "GL-INTEREST"
+                },
+                {
+                    "id": "f47b2933-f95b-42dd-8a70-57bfb3d11653",
+                    "accountNo": "6000000001",
+                    "bal": -40000.0,
+                    "accountCode": "GL-LOAN"
                 }
             ]
         ```

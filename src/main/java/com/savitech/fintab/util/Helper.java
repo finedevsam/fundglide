@@ -208,7 +208,9 @@ public class Helper {
         String amt = StringUtils.capitalize(amountToWords.convertToWords(Double.parseDouble(amount)));
         System.out.println(amt);
         // Send Email notification to destination
-        sendMail(destination, reference, amount, newDescription, "CR");
+        if(!Objects.equals(desc, null)){
+            sendMail(destination, reference, amount, newDescription, "CR");
+        }
 
         // Send Email notification to source
         if(!Objects.equals(desc, null)){

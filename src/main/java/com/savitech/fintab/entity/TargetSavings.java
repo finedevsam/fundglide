@@ -15,7 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,7 +42,7 @@ public class TargetSavings {
     @Column(name = "target_amount")
     private double targetAmount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
@@ -51,4 +51,9 @@ public class TargetSavings {
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "target_savings_config")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private TargetSavingsConfig targetSavingsConfig;
 }

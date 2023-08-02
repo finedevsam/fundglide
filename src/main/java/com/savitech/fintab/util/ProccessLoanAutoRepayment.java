@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.savitech.fintab.entity.Account;
-// import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.CustomerLoan;
 import com.savitech.fintab.entity.CustomerLoanBreakDown;
 import com.savitech.fintab.entity.InternalAccount;
@@ -20,7 +19,6 @@ import com.savitech.fintab.entity.LoanConfig;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerLoanBreakDownRepository;
 import com.savitech.fintab.repository.CustomerLoanRepository;
-// import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.InternalAccountRepository;
 import com.savitech.fintab.repository.LoanConfigRepository;
 
@@ -31,9 +29,6 @@ public class ProccessLoanAutoRepayment {
 
     @Autowired
     private CustomerLoanRepository customerLoanRepository;
-
-    // @Autowired
-    // private CustomerRepository customerRepository;
 
     @Autowired
     private AccountRepository accountRepository;

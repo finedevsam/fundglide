@@ -47,13 +47,13 @@
 <div class="container">
     <h1>Welcome to Our Financial Application!</h1>
 
-    <p>Dear <span th:text="${staffName}"></span>,</p>
+    <p>Dear <span th:text="${customerName}"></span>,</p>
 
-    <p>You have been onboarded on FINTAB Financial Solution as an administrator of the system/.</p>
+    <p>You have successfully save money to your target savings.</p>
 
     <ul>
-        <li><strong>Email:</strong> <span th:text="${email}"></span></li>
-        <li><strong>Password:</strong> <span th:text="${password}"></span></li>
+        <li><strong>Title:</strong> <span th:text="${loanTitle}"></span></li>
+        <li><strong>Amount:</strong> <span th:text="${currency} ${amount}"></span></li>
     </ul>
 
     <p>Should you have any questions or require assistance, please feel free to reach out to our support team.</p>

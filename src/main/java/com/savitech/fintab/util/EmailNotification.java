@@ -96,4 +96,25 @@ public class EmailNotification {
         properties.put("email", email);
         emailConfig.sendHtmlMessage(properties, email, "Staff Onboarding", "staffregister.html");
     }
+
+    public void AutoSaveEmail(String customerName, String email, double amount, String loanTitle) throws MessagingException{
+        Map<Object, Object> properties = new HashMap<>();
+
+        String currency = null;
+
+        CurrencyConfig currencyConfig = currencyConfigRepository.findCurrencyConfigByIsDefault(true);
+
+        if(Objects.equals(currencyConfig, null)){
+            currency = "USD";
+        }else{
+            currency = currencyConfig.getCode();
+        }
+
+        properties.put("customerName", customerName);
+        properties.put("amount", amount);
+        properties.put("email", email);
+        properties.put("currency", currency);
+        properties.put("loanTitle", loanTitle.toUpperCase());
+        emailConfig.sendHtmlMessage(properties, email, "Staff Onboarding", "auto_save.html");
+    }
 }

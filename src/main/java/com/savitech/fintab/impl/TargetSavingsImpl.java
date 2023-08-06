@@ -11,17 +11,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.savitech.fintab.dto.QuickSaveDto;
 import com.savitech.fintab.dto.TargetSavingsDto;
 import com.savitech.fintab.entity.Account;
+import com.savitech.fintab.entity.Credential;
 import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.TargetSavings;
 import com.savitech.fintab.entity.TargetSavingsConfig;
 import com.savitech.fintab.entity.TargetSavingsHistory;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AccountRepository;
+import com.savitech.fintab.repository.CredentialRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.TargetSavingsConfigRepository;
 import com.savitech.fintab.repository.TargetSavingsHistoryRepository;
@@ -46,6 +49,9 @@ public class TargetSavingsImpl implements TargetSavingService{
     private Response response;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private TargetSavingsRepository targetSavingsRepository;
 
     @Autowired
@@ -65,6 +71,9 @@ public class TargetSavingsImpl implements TargetSavingService{
 
     @Autowired
     private TargetSavingsHistoryRepository targetSavingsHistoryRepository;
+
+    @Autowired
+    private CredentialRepository credentialRepository;
 
     @Autowired
     private EmailNotification emailNotification;
@@ -144,6 +153,13 @@ public class TargetSavingsImpl implements TargetSavingService{
         User user = authenticatedUser.auth();
         if(!user.getIsCustomer()){
             return response.failResponse("Permission denied", HttpStatus.BAD_REQUEST);
+        }
+
+        Credential credential = credentialRepository.findByUserId(user.getId());
+        boolean pinIsValid = passwordEncoder.matches(quickSaveDto.getPin(), credential.getPin());
+
+        if(!pinIsValid){
+            return response.failResponse("Invcalid Transaction Pin", HttpStatus.BAD_REQUEST);
         }
 
         Customer customer = customerRepository.findByUserId(user.getId());

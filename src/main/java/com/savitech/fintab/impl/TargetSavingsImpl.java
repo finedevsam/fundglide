@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,12 @@ import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Customer;
 import com.savitech.fintab.entity.TargetSavings;
 import com.savitech.fintab.entity.TargetSavingsConfig;
+import com.savitech.fintab.entity.TargetSavingsHistory;
 import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.repository.TargetSavingsConfigRepository;
+import com.savitech.fintab.repository.TargetSavingsHistoryRepository;
 import com.savitech.fintab.repository.TargetSavingsRepository;
 import com.savitech.fintab.service.TargetSavingService;
 import com.savitech.fintab.util.AuthenticatedUser;
@@ -46,6 +50,9 @@ public class TargetSavingsImpl implements TargetSavingService{
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private TargetSavingsHistoryRepository targetSavingsHistoryRepository;
 
     @Override
     public ResponseEntity<?> createTargetSavings(TargetSavingsDto targetSavingsDto) {
@@ -100,6 +107,13 @@ public class TargetSavingsImpl implements TargetSavingService{
         Customer customer = customerRepository.findByUserId(user.getId());
         List<TargetSavings> targetSavings = targetSavingsRepository.findTargetSavingsByCustomerId(customer.getId());
         return ResponseEntity.ok().body(targetSavings);
+    }
+
+    @Override
+    public Page<TargetSavingsHistory> myTargetSavingHistory(String targetSavingsId, Pageable pageable) {
+        User user = authenticatedUser.auth();
+        Customer customer = customerRepository.findByUserId(user.getId());
+        return targetSavingsHistoryRepository.findAllTargetSavingsHistoryByTargetSavingsIdAndCustomerIdOrderByDateDesc(targetSavingsId, customer.getId(), pageable);
     }
     
 }

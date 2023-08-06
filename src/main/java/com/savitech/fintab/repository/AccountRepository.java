@@ -18,4 +18,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     Account findAllAccountByCustomerId(String id);
 
     Account findAccountByAccountNoAndCustomerId(String accountNo, String customerId);
+
+    Account findAccountByIdAndCustomerId(String id, String customerId);
 }

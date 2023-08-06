@@ -71,6 +71,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findAccountsByCustomerId(customer.getId());
 
         Map<Object, Object> data = new HashMap<>();
+        data.put("id", account.getId());
         data.put("accountNumber", account.getAccountNo());
         data.put("balance", account.getBalance());
         data.put("lockBalance", account.getLockBalance());

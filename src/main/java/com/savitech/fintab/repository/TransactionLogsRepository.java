@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TransactionLogsRepository extends JpaRepository<TransactionLogs, String> {
 
-    Page<TransactionLogs> findAllBySourceOrDestination(String source, String destination, Pageable pageable);
+    Page<TransactionLogs> findAllBySourceOrDestinationOrderByCreateAtDesc(String source, String destination, Pageable pageable);
 }

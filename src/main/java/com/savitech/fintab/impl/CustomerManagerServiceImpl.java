@@ -72,7 +72,7 @@ public class CustomerManagerServiceImpl implements CustomerManagerService{
         if(!user.getIsAdmin()){
             return response.failResponse("You don't have permission to perform this opeation", HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok().body(transactionLogsRepository.findAllBySourceOrDestination(accountNo, accountNo, pageable).toList());
+        return ResponseEntity.ok().body(transactionLogsRepository.findAllBySourceOrDestinationOrderByCreateAtDesc(accountNo, accountNo, pageable).toList());
     }
     
 }

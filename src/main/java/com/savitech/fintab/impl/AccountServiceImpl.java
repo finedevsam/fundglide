@@ -159,7 +159,7 @@ public class AccountServiceImpl implements AccountService {
         User user = authenticatedUser.auth();
         Customer customer = authenticatedUser.getCustomer(user);
         Account account = authenticatedUser.getCustomerAccount(customer);
-        return transactionLogsRepository.findAllBySourceOrDestination(account.getAccountNo(), account.getAccountNo(), pageable);
+        return transactionLogsRepository.findAllBySourceOrDestinationOrderByCreateAtDesc(account.getAccountNo(), account.getAccountNo(), pageable);
     }
 
     @SneakyThrows

@@ -15,9 +15,11 @@ import org.springframework.stereotype.Component;
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.TargetSavings;
 import com.savitech.fintab.entity.TargetSavingsHistory;
+import com.savitech.fintab.entity.User;
 import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.TargetSavingsHistoryRepository;
 import com.savitech.fintab.repository.TargetSavingsRepository;
+import com.savitech.fintab.repository.UserRepository;
 
 import lombok.SneakyThrows;
 
@@ -31,6 +33,9 @@ public class ProcessAutoSave {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private TargetSavingsHistoryRepository targetSavingsHistoryRepository;
@@ -56,6 +61,7 @@ public class ProcessAutoSave {
             String payTime = formatProcessingDate(data.getTargetSavingsConfig().getAutoSaveTime());
             
             if(Objects.equals(currentTime, payTime) && Objects.equals(data.getTargetSavingsConfig().getAutoSaveDay(), todaysDay)){
+                User user = userRepository.findUserById(data.getCustomer().getUser().getId());
                 Account account = accountRepository.findAccountByCustomerId(data.getCustomer().getId());
                 double accountBalance = Double.valueOf(account.getBalance());
                 double amountToSave = data.getTargetSavingsConfig().getAutoSavingsAmount();
@@ -87,12 +93,13 @@ public class ProcessAutoSave {
                     history.setDate(today);
                     history.setTargetSavings(targetSavings);
                     history.setReference(randomStringGenerator.generateReference(16));
+                    history.setCustomer(data.getCustomer());
                     targetSavingsHistoryRepository.save(history);
 
                     // Send email notification as regards the savings
                     emailNotification.AutoSaveEmail(
                         data.getCustomer().getFirstName(), 
-                        data.getCustomer().getUser().getEmail(), 
+                        user.getEmail(),
                         amountToSave, 
                         data.getTitle());
                 }

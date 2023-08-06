@@ -37,5 +37,5 @@ public class TransactionLogs {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
-    private Timestamp create_at;
+    private Timestamp createAt;
 }

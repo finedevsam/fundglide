@@ -50,10 +50,10 @@
     <p>Dear <span th:text="${customerName}"></span>,</p>
 
     <p>You have successfully save money to your target savings.</p>
-
+    
     <ul>
         <li><strong>Title:</strong> <span th:text="${loanTitle}"></span></li>
-        <li><strong>Amount:</strong> <span th:text="${currency} ${amount}"></span></li>
+        <li><strong>Amount:</strong> <span th:text="${currency}"></span> <span th:text="${amount}"></span></li>
     </ul>
 
     <p>Should you have any questions or require assistance, please feel free to reach out to our support team.</p>

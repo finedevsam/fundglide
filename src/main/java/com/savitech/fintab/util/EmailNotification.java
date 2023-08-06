@@ -115,6 +115,6 @@ public class EmailNotification {
         properties.put("email", email);
         properties.put("currency", currency);
         properties.put("loanTitle", loanTitle.toUpperCase());
-        emailConfig.sendHtmlMessage(properties, email, "Staff Onboarding", "auto_save.html");
+        emailConfig.sendHtmlMessage(properties, email, "Auto Save", "auto_save.html");
     }
 }

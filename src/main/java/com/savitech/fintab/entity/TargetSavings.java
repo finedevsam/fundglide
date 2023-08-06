@@ -42,7 +42,7 @@ public class TargetSavings {
     @Column(name = "target_amount")
     private double targetAmount;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore

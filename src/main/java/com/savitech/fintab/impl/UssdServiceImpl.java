@@ -1,6 +1,7 @@
 package com.savitech.fintab.impl;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -15,6 +16,8 @@ import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CurrencyConfigRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.service.UssdService;
+import com.savitech.fintab.util.Transfer;
+import com.savitech.fintab.util.Tuple;
 
 @Service
 public class UssdServiceImpl implements UssdService{
@@ -28,6 +31,9 @@ public class UssdServiceImpl implements UssdService{
     @Autowired
     private CurrencyConfigRepository currencyConfigRepository;
 
+    @Autowired
+    private Transfer transfer;
+
 
     @Override
     public String implementUssd(String requestBody) {
@@ -40,9 +46,9 @@ public class UssdServiceImpl implements UssdService{
                 String phoneNumber = body.get("phoneNumber");
                 String text = body.get("text");
 
-                System.out.println(text);
+                // System.out.println(text);
                 String newPhoneNumber = String.format("0%s", phoneNumber.substring(6));
-                System.out.println(newPhoneNumber);
+                // System.out.println(newPhoneNumber);
                 StringBuilder response = new StringBuilder("");
 
                 if(Objects.equals(customerRepository.findCustomerByPhoneNumber(newPhoneNumber), null)){
@@ -59,16 +65,40 @@ public class UssdServiceImpl implements UssdService{
                     response.append(String.format("CON WELCOME TO FUNDGLIDE\n Your balance is %s %s\n\n 10. Transfer",baseCurrency(), account.getBalance()));
     
                 }else if (text.contentEquals("2")) {
-                    // Business logic for first level response
+                    response.append("CON Enter Account NO");
                     
-                    // This is a terminal request. Note how we start the response with END
-                    response.append("END Your phone number is ");
-                    response.append(phoneNumber);
     
-                } else if (text.contentEquals("1*1")) {
+                } else if(text.contains("2*")) {
+                    String[] substrings = text.split("\\*");
+                    List<String> data = Arrays.asList(substrings);
+                    if(data.size() == 2){
+                        String accountNo = data.get(1);
+                        Account account = accountRepository.findAccountByAccountNo(accountNo);
+                        response.append(String.format("CON %s %s \n\n Enter Amount", account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                    }else if(data.size() == 3){
+                        String accountNo = data.get(1);
+                        Account account = accountRepository.findAccountByAccountNo(accountNo);
+                        String amount = data.get(2);
+                        response.append(String.format("CON You are sending %s %s to %s %s \n\n Enter PIN", baseCurrency(), amount, account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                    }else if(data.size() == 4){
+                        String pin = data.get(3);
+                        String accountNo = data.get(1);
+                        String amount = data.get(2);
+
+                        Tuple<Boolean, String> resp = transfer.Transfer(newPhoneNumber, accountNo, amount, pin);
+                        if(resp.getItem1()){
+                            Account account = accountRepository.findAccountByAccountNo(accountNo);
+                            response.append(String.format("END %s %s sent to %s %s ", baseCurrency(), amount, account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                        }else{
+                            response.append(String.format("END %s ", resp.getItem2()));
+                        }
+                    }
+
+                }
+                else if (text.contentEquals("1*1")) {
                     // This is a second level response where the user selected 1 in the first instance
                     
-                    String accountNumber = "ACC100101";
+                    // String accountNumber = "ACC100101";
                     response.append("END Your account number is "); // This is a terminal request. Note how we start the response with END
                     response.append(phoneNumber);
     

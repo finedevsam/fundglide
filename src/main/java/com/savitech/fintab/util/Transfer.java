@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.Credential;
@@ -13,6 +14,7 @@ import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CredentialRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 
+@Component
 public class Transfer {
     @Autowired
     private CustomerRepository customerRepository;

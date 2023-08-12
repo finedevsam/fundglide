@@ -96,9 +96,21 @@ public class TargetSavingsImpl implements TargetSavingService{
             "08", "09", "10", "11", "12", "13", "14", "15", 
             "16", "17", "18", "19", "20", "21", "22", "23", 
             "24", "25", "26", "27", "28", "29", "30", "31");
-
         
-        if(!acceptedDays.contains(targetSavingsDto.getAutoSaveDay())){
+
+        List<String> acceptedType = Arrays.asList("daily", "weekly", "monthly");
+
+        List<String> acceptedWeekDays = Arrays.asList("01", "02", "03", "04", "05", "06", "07");
+
+        if(!acceptedType.contains(targetSavingsDto.getAutoSaveType())){
+            return response.failResponse("Kindly select auto save type from ['daily', 'weekly', 'monthly']", HttpStatus.OK);
+        }
+
+        if(Objects.equals(targetSavingsDto.getAutoSaveType(), "weekly") && !acceptedWeekDays.contains(targetSavingsDto.getAutoSaveDay())){
+            return response.failResponse("Invalid weekdays number. It can only take ['01', '02', '03', '04', '05', '06', '07']", HttpStatus.BAD_REQUEST);
+        }
+
+        if(!acceptedDays.contains(targetSavingsDto.getAutoSaveDay()) && Objects.equals(targetSavingsDto.getAutoSaveType(), "monthly") ){
             return response.failResponse("Invalid days of the month", HttpStatus.BAD_REQUEST);
         }
 
@@ -109,9 +121,17 @@ public class TargetSavingsImpl implements TargetSavingService{
 
         Account account = accountRepository.findAccountByCustomerId(customer.getId());
 
-        targetSavingsConfig.setAutoSaveDay(targetSavingsDto.getAutoSaveDay());
+        String autoSaveDay = null;
+        if(Objects.equals(targetSavingsDto.getAutoSaveType(), "daily")){
+            autoSaveDay = "00";
+        }else{
+            autoSaveDay = targetSavingsDto.getAutoSaveDay();
+        }
+
+        targetSavingsConfig.setAutoSaveDay(autoSaveDay);
         targetSavingsConfig.setAutoSaveTime(targetSavingsDto.getAutoSaveTime());
         targetSavingsConfig.setAutoSavingsAmount(Double.valueOf(targetSavingsDto.getAutoSavingsAmount()));
+        targetSavingsConfig.setAutoSaveType(targetSavingsDto.getAutoSaveType());
         targetSavingsConfig.setPrimarySource(account.getId());
 
 

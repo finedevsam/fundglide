@@ -29,6 +29,9 @@ public class TargetSavingsConfig {
     @Column(name = "secondary_source", nullable = true)
     private String secondarySource;
 
+    @Column(name = "auto_save_type", nullable = true)
+    private String autoSaveType;
+
     @Column(name = "auto_savings_amount", nullable = true)
     private double autoSavingsAmount;
 

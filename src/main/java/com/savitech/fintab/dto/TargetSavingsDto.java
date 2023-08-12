@@ -29,4 +29,8 @@ public class TargetSavingsDto {
     @NotBlank(message = "Auto Save Amount can not be blank")
     private double autoSavingsAmount;
 
+    @NotNull(message = "Auto Save Type can not be null")
+    @NotBlank(message = "Auto Save Type can not be blank")
+    private String autoSaveType;
+
 }

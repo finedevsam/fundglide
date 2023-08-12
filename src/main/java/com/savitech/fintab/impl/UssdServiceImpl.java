@@ -16,7 +16,7 @@ import com.savitech.fintab.repository.AccountRepository;
 import com.savitech.fintab.repository.CurrencyConfigRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.service.UssdService;
-import com.savitech.fintab.util.Transfer;
+import com.savitech.fintab.util.UssdOperation;
 import com.savitech.fintab.util.Tuple;
 
 @Service
@@ -32,7 +32,7 @@ public class UssdServiceImpl implements UssdService{
     private CurrencyConfigRepository currencyConfigRepository;
 
     @Autowired
-    private Transfer transfer;
+    private UssdOperation ussdOperation;
 
 
     @Override
@@ -85,10 +85,9 @@ public class UssdServiceImpl implements UssdService{
                         String accountNo = data.get(1);
                         String amount = data.get(2);
 
-                        Tuple<Boolean, String> resp = transfer.Transfer(newPhoneNumber, accountNo, amount, pin);
+                        Tuple<Boolean, String> resp = ussdOperation.Transfer(newPhoneNumber, accountNo, amount, pin);
                         if(resp.getItem1()){
-                            Account account = accountRepository.findAccountByAccountNo(accountNo);
-                            response.append(String.format("END %s %s sent to %s %s ", baseCurrency(), amount, account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                            response.append(String.format("END %s ", resp.getItem2()));
                         }else{
                             response.append(String.format("END %s ", resp.getItem2()));
                         }

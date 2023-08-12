@@ -205,8 +205,8 @@ public class Helper {
         logs.setDestinationBank(destinationBank);
         logs.setDescription(newDescription);
         transactionLogsRepository.save(logs);
-        String amt = StringUtils.capitalize(amountToWords.convertToWords(Double.parseDouble(amount)));
-        System.out.println(amt);
+        // String amt = StringUtils.capitalize(amountToWords.convertToWords(Double.parseDouble(amount)));
+        // System.out.println(amt);
         // Send Email notification to destination
         if(!Objects.equals(desc, null)){
             sendMail(destination, reference, amount, newDescription, "CR");

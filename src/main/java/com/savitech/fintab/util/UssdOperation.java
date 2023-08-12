@@ -15,7 +15,7 @@ import com.savitech.fintab.repository.CredentialRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 
 @Component
-public class Transfer {
+public class UssdOperation {
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -49,26 +49,25 @@ public class Transfer {
 
             if(Objects.equals(account.getAccountNo(), recieverAccount)){
                 return new Tuple<>(false, "you can't send money to yourself");
-            }
-
-            if(amountToSend > senderBal){
+            }else if(amountToSend > senderBal){
                 return new Tuple<>(false, "Insufficient Balance");
+            }else{
+                
+                double newSendBal = senderBal - amountToSend;
+                double newRecBal = receiverBal + amountToSend;
+
+                account.setBalance(String.valueOf(newSendBal));
+                accountRepository.save(account);
+
+                reciepient.setBalance(String.valueOf(newRecBal));
+                accountRepository.save(reciepient);
+                
+                // Log transaction
+                helper.createTransactionLog(account.getAccountNo(), bank_code, recieverAccount,
+                    bank_code, amount, "USSD");
+
+                return new Tuple<>(true, "Transfer Successfull");
             }
-
-            double newSendBal = senderBal - amountToSend;
-            double newRecBal = receiverBal + amountToSend;
-
-            account.setBalance(String.valueOf(newSendBal));
-            accountRepository.save(account);
-
-            reciepient.setBalance(String.valueOf(newRecBal));
-            accountRepository.save(reciepient);
-            
-            // Log transaction
-            helper.createTransactionLog(account.getAccountNo(), bank_code, recieverAccount,
-                bank_code, amount, "USSD");
-
-            return new Tuple<>(true, "Transfer Successfull");
         }else{
             return new Tuple<>(false, "Invalid transaction pin");
         }

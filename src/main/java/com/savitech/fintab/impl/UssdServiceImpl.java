@@ -130,14 +130,13 @@ public class UssdServiceImpl implements UssdService{
                         }
                     }
 
-                }
-                else if (text.contentEquals("1*1")) {
-                    // This is a second level response where the user selected 1 in the first instance
-                    
-                    // String accountNumber = "ACC100101";
-                    response.append("END Your account number is "); // This is a terminal request. Note how we start the response with END
-                    response.append(phoneNumber);
-    
+                }else if (text.contentEquals("3")) {
+                    response.append("END Bills Payment Comming Soon");
+
+                }else if (text.contentEquals("4")) {
+                    response.append("END Quick Loan Comming Soon");
+                }else if (text.contentEquals("0")) {
+                    response.append("END Thank you for Using FUNDGLIDE");
                 }
     
                 return response.toString();

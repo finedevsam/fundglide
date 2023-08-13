@@ -57,15 +57,52 @@ public class UssdServiceImpl implements UssdService{
                 }else if (text.isEmpty()) {
                     // This is the first request. Note how we start the response with CON
                     
-                    response.append("CON WELCOME TO FUNDGLIDE\n1. Balance\n 2. Transfer");
+                    response.append("CON WELCOME TO FUNDGLIDE\n1. Balance\n 2. Transfer\n 3. Paybill\n 4. Quick Loan\n 0. Exit");
     
                 } else if (text.contentEquals("1")) {
                     Customer customer = customerRepository.findCustomerByPhoneNumber(newPhoneNumber);
                     Account account = accountRepository.findAccountByCustomerId(customer.getId());
-                    response.append(String.format("CON WELCOME TO FUNDGLIDE\n Your balance is %s %s\n\n 10. Transfer",baseCurrency(), account.getBalance()));
+                    response.append(String.format("CON WELCOME TO FUNDGLIDE\n\nYour balance is %s %s\n\n 1. Transfer\n 2. Quick Loan\n 3. Paybill\n 0. Exit",baseCurrency(), account.getBalance()));
     
+                }else if(text.contains("1*")) {
+                    String[] substrings = text.split("\\*");
+                    List<String> data = Arrays.asList(substrings);
+                    if(Integer.valueOf(data.get(1)) == 1){
+                        if(data.size() == 2){
+                            response.append("CON WELCOME TO FUNDGLIDE\n\nEnter Account NO");
+
+                        }else if(data.size() == 3){
+                            String accountNo = data.get(2);
+                            Account account = accountRepository.findAccountByAccountNo(accountNo);
+                            response.append(String.format("CON WELCOME TO FUNDGLIDE\n\n%s %s \n\n Enter Amount", account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                        }else if(data.size() == 4){
+                            String accountNo = data.get(2);
+                            Account account = accountRepository.findAccountByAccountNo(accountNo);
+                            String amount = data.get(3);
+                            response.append(String.format("CON WELCOME TO FUNDGLIDE\n\nYou are sending %s %s to %s %s \n\n Enter PIN", baseCurrency(), amount, account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                        }else if(data.size() == 5){
+
+                            String pin = data.get(4);
+                            String accountNo = data.get(2);
+                            String amount = data.get(3);
+
+                            Tuple<Boolean, String> resp = ussdOperation.Transfer(newPhoneNumber, accountNo, amount, pin);
+                            if(resp.getItem1()){
+                                response.append(String.format("END %s ", resp.getItem2()));
+                            }else{
+                                response.append(String.format("END %s ", resp.getItem2()));
+                            }
+                        }
+                    }else if(Integer.valueOf(data.get(1)) == 2){
+                        // Quick Loan Business Logic here
+                        response.append("END Quick Loan Comming Soon");
+                    }else if(Integer.valueOf(data.get(1)) == 3){
+                        // Bills payment Logic here
+                        response.append("END Bills Payment Comming Soon");
+                    }
+
                 }else if (text.contentEquals("2")) {
-                    response.append("CON Enter Account NO");
+                    response.append("CON WELCOME TO FUNDGLIDE\n\nEnter Account NO");
                     
     
                 } else if(text.contains("2*")) {
@@ -74,12 +111,12 @@ public class UssdServiceImpl implements UssdService{
                     if(data.size() == 2){
                         String accountNo = data.get(1);
                         Account account = accountRepository.findAccountByAccountNo(accountNo);
-                        response.append(String.format("CON %s %s \n\n Enter Amount", account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                        response.append(String.format("CON WELCOME TO FUNDGLIDE\n\n%s %s \n\n Enter Amount", account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
                     }else if(data.size() == 3){
                         String accountNo = data.get(1);
                         Account account = accountRepository.findAccountByAccountNo(accountNo);
                         String amount = data.get(2);
-                        response.append(String.format("CON You are sending %s %s to %s %s \n\n Enter PIN", baseCurrency(), amount, account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                        response.append(String.format("CON WELCOME TO FUNDGLIDE\n\nYou are sending %s %s to %s %s \n\n Enter PIN", baseCurrency(), amount, account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
                     }else if(data.size() == 4){
                         String pin = data.get(3);
                         String accountNo = data.get(1);

@@ -130,6 +130,12 @@
             <artifactId>jsoup</artifactId>
             <version>1.16.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>3.14.1</version>
+            <classifier>standalone</classifier>
+        </dependency>
     </dependencies>
 
     <build>

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.savitech.fintab.entity.Account;
 import com.savitech.fintab.entity.CurrencyConfig;
 import com.savitech.fintab.entity.Customer;
@@ -17,6 +18,10 @@ import com.savitech.fintab.repository.CurrencyConfigRepository;
 import com.savitech.fintab.repository.CustomerRepository;
 import com.savitech.fintab.service.UssdService;
 import com.savitech.fintab.util.UssdOperation;
+
+import lombok.SneakyThrows;
+
+import com.savitech.fintab.util.TVSubscribtion;
 import com.savitech.fintab.util.Tuple;
 
 @Service
@@ -34,8 +39,12 @@ public class UssdServiceImpl implements UssdService{
     @Autowired
     private UssdOperation ussdOperation;
 
+    @Autowired
+    private TVSubscribtion tvSubscribtion;
+
 
     @Override
+    @SneakyThrows
     public String implementUssd(String requestBody) {
         Map<String, String> body = Arrays
                 .stream(requestBody.split("&"))
@@ -60,7 +69,6 @@ public class UssdServiceImpl implements UssdService{
 
                 }else if (text.isEmpty()) {
                     // This is the first request. Note how we start the response with CON
-                    
                     response.append("CON WELCOME TO FUNDGLIDE\n1. Balance\n 2. Transfer\n 3. Paybill\n 4. Quick Loan\n 0. Exit");
     
                 } else if (text.contentEquals("1")) {

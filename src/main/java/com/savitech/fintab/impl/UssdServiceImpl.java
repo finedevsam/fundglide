@@ -158,6 +158,7 @@ public class UssdServiceImpl implements UssdService{
                         response.append("CON WELCOME TO FUNDGLIDE\n\n 1. Airtel\n 2.MTN\n 3. Glo\n 4. 9Mobile");
                     }else if(data.size() == 2 && Integer.valueOf(data.get(1))== 3){
                         //TV Subscription here
+                        JsonNode variant = tvSubscribtion.getTvVariant("gotv");
                         response.append("CON WELCOME TO FUNDGLIDE\n\n 1. DSTV\n 2.GOTV\n 3. Startime");
                     }else if(data.size() == 2 && Integer.valueOf(data.get(1))== 4){
                         // Electricity Here

@@ -54,7 +54,7 @@ public class UssdServiceImpl implements UssdService{
 
                 String[] substrings = text.split("\\*");
                 List<String> data = Arrays.asList(substrings);
-
+                System.out.println(data);
                 if(Objects.equals(customerRepository.findCustomerByPhoneNumber(newPhoneNumber), null)){
                     response.append("END Your number is not registered ");
 
@@ -76,7 +76,11 @@ public class UssdServiceImpl implements UssdService{
                         }else if(data.size() == 3){
                             String accountNo = data.get(2);
                             Account account = accountRepository.findAccountByAccountNo(accountNo);
-                            response.append(String.format("CON WELCOME TO FUNDGLIDE\n\n%s %s \n\n Enter Amount", account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                            if(Objects.equals(account, null)){
+                                response.append("END Wrong Account Number");
+                            }else{
+                                response.append(String.format("CON WELCOME TO FUNDGLIDE\n\n%s %s \n\n Enter Amount", account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                            }
                         }else if(data.size() == 4){
                             String accountNo = data.get(2);
                             Account account = accountRepository.findAccountByAccountNo(accountNo);
@@ -111,7 +115,11 @@ public class UssdServiceImpl implements UssdService{
                     if(data.size() == 2 && Integer.valueOf(data.get(0))== 2){
                         String accountNo = data.get(1);
                         Account account = accountRepository.findAccountByAccountNo(accountNo);
-                        response.append(String.format("CON WELCOME TO FUNDGLIDE\n\n%s %s \n\n Enter Amount", account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                        if(Objects.equals(account, null)){
+                            response.append("END Wrong Account Number");
+                        }else{
+                            response.append(String.format("CON WELCOME TO FUNDGLIDE\n\n%s %s \n\n Enter Amount", account.getCustomer().getLastName().toUpperCase(), account.getCustomer().getFirstName().toUpperCase()));
+                        }
                     }else if(data.size() == 3 && Integer.valueOf(data.get(0))== 2){
                         String accountNo = data.get(1);
                         Account account = accountRepository.findAccountByAccountNo(accountNo);
@@ -131,8 +139,22 @@ public class UssdServiceImpl implements UssdService{
                     }
 
                 }else if (text.contentEquals("3")) {
-                    response.append("END Bills Payment Comming Soon");
+                    response.append("CON WELCOME TO FUNDGLIDE\n\n 1. Airtime\n 2.Data\n 3. TV\n 4. Power");
 
+                }else if (text.startsWith("3*")){
+                    if(data.size() == 2 && Integer.valueOf(data.get(1))== 1){
+                        // List the Network here
+                        response.append("CON WELCOME TO FUNDGLIDE\n\n 1. Airtel\n 2.MTN\n 3. Glo\n 4. 9Mobile");
+                    }else if(data.size() == 2 && Integer.valueOf(data.get(1))== 2){
+                        // List the Network here
+                        response.append("CON WELCOME TO FUNDGLIDE\n\n 1. Airtel\n 2.MTN\n 3. Glo\n 4. 9Mobile");
+                    }else if(data.size() == 2 && Integer.valueOf(data.get(1))== 3){
+                        //TV Subscription here
+                        response.append("CON WELCOME TO FUNDGLIDE\n\n 1. DSTV\n 2.GOTV\n 3. Startime");
+                    }else if(data.size() == 2 && Integer.valueOf(data.get(1))== 4){
+                        // Electricity Here
+                        response.append("CON WELCOME TO FUNDGLIDE\n\n 1. Ikeja Electric\n 2.BEDC\n 3. EKO Electric\n 4.IBEDC\n 5. Abuja Electric");
+                    }
                 }else if (text.contentEquals("4")) {
                     response.append("END Quick Loan Comming Soon");
                 }else if (text.contentEquals("0")) {

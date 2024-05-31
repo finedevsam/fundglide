@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [ main ]  # Set this to your default branch
+    branches: [ master ]  # Set this to your default branch
 
 jobs:
   deploy:

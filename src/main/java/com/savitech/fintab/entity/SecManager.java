@@ -16,7 +16,8 @@ public class SecManager {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "passcode", nullable = false, columnDefinition = "bytea")
+    @Lob
+    @Column(name = "passcode", nullable = false)
     private byte[] passcode;
 
     @Column(name = "locator", nullable = false)

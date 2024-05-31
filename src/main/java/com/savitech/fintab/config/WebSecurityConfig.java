@@ -24,33 +24,32 @@ public class WebSecurityConfig {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers(
-                        "/auth/login",
-                         "/auth/admin/login",
-                        "/auth/register",
-                        "/auth/reset/password",
-                        "/auth/reset/confirm",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html",
-                        "/ussd"
-                ).permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers(
+                                "/auth/login",
+                                "/auth/admin/login",
+                                "/auth/register",
+                                "/auth/reset/password",
+                                "/auth/reset/confirm",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/ussd",
+                                "/")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         http.httpBasic();
         return http.build();
     }
 
     @Bean
-    public JwtRequestFilter authenticationJwtTokenFilter(){
+    public JwtRequestFilter authenticationJwtTokenFilter() {
         return new JwtRequestFilter();
     }
 
@@ -60,7 +59,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(){
+    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
@@ -68,7 +67,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 

@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]  # Set this to your default branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 161.97.165.158 >> ~/.ssh/known_hosts
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+
+    - name: Git Pull
+      run: ssh root@161.97.165.158 "cd fundglide && git pull origin master"
+
+    - name: Make Script Executable
+      run: ssh root@161.97.165.158 "cd fundglide && chmod +x ./restart.sh ./shutdown.sh ./startup.sh"
+
+    - name: Stop Application
+      run: ssh root@161.97.165.158 "cd fundglide && sudo sh ./shutdown.sh"
+
+    - name: Restart Application
+      run: ssh root@161.97.165.158 "cd fundglide && sudo sh ./startup.sh"
+
+    
+
+  

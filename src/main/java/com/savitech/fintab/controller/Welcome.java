@@ -15,7 +15,7 @@ public class Welcome {
     public ResponseEntity<?> WelcomePaage() {
         Map<Object, String> data = new HashMap<>();
         data.put("Version", "V1");
-        data.put("message", "Welcome to Guarantly");
+        data.put("message", "Welcome to Fundglide");
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 

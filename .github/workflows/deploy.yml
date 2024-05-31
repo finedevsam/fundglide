@@ -22,7 +22,7 @@ jobs:
         DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
 
     - name: Git Pull
-      run: ssh root@161.97.165.158 "cd fundglide && sudo git pull origin master"
+      run: ssh root@161.97.165.158 "cd fundglide && git pull origin master"
 
     - name: Make Script Executable
       run: ssh root@161.97.165.158 "cd fundglide && chmod +x ./restart.sh ./shutdown.sh ./startup.sh"

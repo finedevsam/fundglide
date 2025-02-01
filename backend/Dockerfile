@@ -32,7 +32,7 @@ COPY ${ENV_FILE_PATH} /app/.env
 COPY --from=builder /app/target/*.jar app.jar
 
 # Expose your app's port (optional)
-EXPOSE 8082
+EXPOSE 8080
 
 # Specify the entrypoint to run the Spring Boot app
 ENTRYPOINT ["java", "-jar", "app.jar"]

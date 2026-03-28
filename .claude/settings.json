@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /Users/samsonilemobayo/Documents/project/fundglide/backend/src/main/java/com/savitech/fintab/**/*.java)"
+    ]
+  }
+}

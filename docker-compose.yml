@@ -1,5 +1,14 @@
 services:
- 
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    networks:
+      - fundglide-backend
+    depends_on:
+      - backend
+
   backend:
     build: ./backend
     ports:
@@ -10,7 +19,8 @@ services:
       - fundglide-backend
       - fundglide-mysql
     depends_on:
-      - mysqldb
+      mysqldb:
+        condition: service_healthy
 
   mysqldb:
     image: mysql:latest
@@ -26,6 +36,12 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pvictoria1992"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 networks:
   fundglide-mysql:

@@ -1527,3 +1527,6 @@ This are the account we can create on the system to manage several income, track
 
 ... and so on for each endpoint.
 
+
+
+<!-- Security scan triggered at 2026-09-05 07:53:33 -->
